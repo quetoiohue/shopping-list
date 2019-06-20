@@ -1,0 +1,214 @@
+* {
+    padding: 0; 
+    margin: 0;
+    box-sizing: border-box;
+    transition: all .2s;
+}
+
+/* ======================List-item========================= */
+.list-page{
+    display: block;
+}
+.shopping-list{
+    margin: auto;
+    max-width: 600px;
+    padding: 139px 0 224px;
+    max-width: 600px;
+    width: 100%;
+    display: block;
+    position: relative;
+    min-height: 500px;
+}
+.top-bar{
+    background: #fafafa;
+    height: 0;
+    left: 0;
+    padding-top: 24px;
+    position: fixed;
+    right: 0;
+    text-align: center;
+    top: 58px;
+    z-index: 190;
+}
+.add-input-item{
+    position: relative;
+    display: inline-block;
+    max-width: 600px;
+    width: 100%;
+    background: #fff;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+.form{
+    display: flex;
+    position: relative;
+    align-items: center;
+    height: 56px;
+    padding: 0px 10px;
+    line-height: 56px;
+}
+.form .wrap-add-input{
+    padding-left: 60px;
+    width: 100%;
+    height: 100%;
+    justify-content: space-between;
+}
+.wrap-btn{
+    position: absolute;
+    top: 7%;
+    left: 1%;
+    display: inline-block;
+}
+.add-input {
+    width: 100%;
+    height: 100%;
+    padding: 5px 10px;
+    outline: none;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: 'Roboto', sans-serif;
+    border-radius: 4px;
+}
+.carousel{
+    margin: 5px 0px;
+    max-height: 50px;
+    width: 100%;
+    background: #fff;
+    display: none;
+    align-items: center;
+    transition: all 1s;
+}
+.carousel-inner{
+    width: 100%;
+    padding: 0px 16px;
+    overflow: hidden;
+}
+.slides {
+    display: flex;
+    max-width: 9000px;
+    height: 100%;
+}
+.slide {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 8px;
+    padding: 8px;
+    box-shadow: 0px 1px 3px rgba(0, 0, 0, 0.1);
+    border: 1px solid #d8d8d8;
+    max-width: 200px;
+    max-height: 40px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+.wrap-slide-img{
+    margin-right: 5px; 
+}
+.slide-img {
+    height: 24px;
+    width: 24px;
+    /* background-image: url('../../images/local-small.svg'); */
+    background-size: 20px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.wrap-slide-name{
+    margin-right: 5px;
+    width: auto;
+}
+.slide-name{
+    font-size: .9rem;
+    font-weight: 400;
+    width: 100%;
+    text-overflow: ellipsis;
+    display: block;
+}
+.wrap-prev, .wrap-next{
+    position: absolute;
+    top: 50%;
+    width: 30px;
+    height: 30px;
+    line-height: 30px;
+    border-radius: 50%;
+    background: #d8d8d8;
+    padding: 5px 8px;
+    z-index: 1000;
+    transform: translate(0, 40%);
+    cursor: pointer;
+}
+.wrap-prev{
+    left: 1%;
+    /* padding-right: 8px; */
+}
+.wrap-next
+{
+    right: 1%;
+    padding-left: 12px;
+}
+.prev, .next{
+    display: block;
+    height: 0px;
+    width: 0px;
+    border-top: 10px solid transparent;
+    border-bottom: 10px solid transparent;
+}
+.prev {
+    border-right: 10px solid rgba(0, 0, 0, 0.5);
+}
+.next {
+    border-left: 10px solid rgba(0, 0, 0, 0.5);
+}
+.list-item{
+    list-style-type: none;
+    background: yellowgreen;
+}
+.item-active {
+    padding: 0px 10px;
+    display: flex;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    height: 72px;
+    cursor: pointer;
+    transition: background .5s;
+}
+.item-active:hover{
+    background: rgba(0,0,0,0.1);
+}
+.item-active:hover .wrap-btn-item{
+    opacity: 1;
+}
+.wrap-img {
+    display: inline-block;
+    margin: 5px 0px;
+}
+.img {
+    height: 40px;
+    width: 40px;
+    /* background-image: url('../../images/item1.webp'); */
+    background-size: 40px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.wrap-name-item{
+    height: 100%;
+    width: 100%;
+}
+.name-item {
+    text-align: left;
+    display: block;
+    width: 100%;
+    padding-left: 15px;
+    line-height: 69px;
+    font-size: 1rem;
+}
+.wrap-btn-item{
+    display: flex;
+    opacity: 0  ;
+}
+.wrap-btn-item .btn-item {
+    margin-right: 5px;
+    display: inline-block;
+}
