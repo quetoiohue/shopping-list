@@ -1,17 +1,23 @@
 import React from "react";
+import "./ListItemShopping.css";
 import MaterialIcon from "material-icons-react";
-import "./ListItem.css";
 import data from "./data/data";
+import ListCheckedOff from "./list-check-off/ListCheckedOff";
+import ListItems from "./list-item/ListItems";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
-export default class ListItem extends React.Component {
+const getListItem = JSON.parse(localStorage.getItem("listItem"));
+const getListItemCheckOff = JSON.parse(localStorage.getItem("listItemCheckOff"));
+
+export default class ListItemShopping extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       translateX: 0,
       listProduct: data.listProduct,
-      listItem: []
+      listItem: getListItem || [],
+      listItemCheckOff: getListItemCheckOff || []
     };
   }
   prevSlide = event => {
@@ -37,32 +43,86 @@ export default class ListItem extends React.Component {
       return;
     }
   };
-  //   stateSlideLimit = () => {
-  //         const { btnPrev, btnNext, slide } = this.refs;
-  //         const {translateX} = this.state;
-  //         const widthSlide = -(arr.length) * slide.offsetWidth;
-  //        btnPrev.style.display = (translateX < 0) ? "block" : "none";
-  //        btnNext.style.display = (translateX > widthSlide) ? "block" : "none";
-  //   }
   addItem = item => {
     const { listItem } = this.state;
-      listItem.push(item);
-      this.setState({
-          listItem
-      })
-      console.log(JSON.stringify(listItem));  
+    listItem.unshift(item);
+    this.setState({
+      listItem
+    });
+    console.log(JSON.stringify(listItem));
   };
-  addItemByInput = (event) => {
-    const {listItem, listProduct} = this.state;
-    if(event.key === 'Enter'){
-      const { name, value } = event.target;
-      const getItem = listProduct.find(item => item.name === value);
-      listItem.push((getItem) ? getItem : {name: value , picture: ["../../images/local-small1.png"]});
+
+  addItemByInput = event => {
+    const { listItem, listProduct } = this.state;
+    if (event.key === "Enter") {
+      const { value } = this.refs.inputAdd;
+      if (value) {
+        const getItem = listProduct.find(item => item.name === value);
+        listItem.unshift(
+          getItem
+            ? getItem
+            : {
+                name: value,
+                picture: ["http://chittagongit.com/download/117414"]
+              }
+        );
+      }
       this.setState({
         listItem
-      })
+      });
     }
-    
+  };
+
+  deleteItem = index => {
+    const { listItem } = this.state;
+    listItem.splice(index, 1);
+    this.setState({
+      listItem
+    });
+  };
+
+  addItemCheckOut = index => {
+    const { listItem, listItemCheckOff } = this.state;
+    listItemCheckOff.unshift(listItem[index]);
+    listItem.splice(index, 1);
+    this.setState({
+      listItem,
+      listItemCheckOff
+    });
+  };
+
+  addCheckOffToItem = index => {
+    const { listItem, listItemCheckOff } = this.state;
+    listItem.unshift(listItemCheckOff[index]);
+    listItemCheckOff.splice(index, 1);
+    this.setState({
+      listItem,
+      listItemCheckOff
+    });
+  };
+
+  deleteItemCheckOff = index => {
+    const { listItemCheckOff } = this.state;
+    listItemCheckOff.splice(index, 1);
+    this.setState({
+      listItemCheckOff
+    });
+  };
+  addAllCheckOffToItem = () => {
+    const { listItemCheckOff, listItem } = this.state;
+    const listItems = listItem.concat(listItemCheckOff);
+    console.log(listItem);
+    this.setState({
+      listItem: listItems,
+      listItemCheckOff: [],
+    })  
+  }
+  deleteAllItemCheckOff = () => {
+    const { listItemCheckOff } = this.state;  
+    this.setState({
+      listItemCheckOff: []
+    })  
+    console.log(listItemCheckOff);
   }
   render() {
     const styles = {
@@ -72,8 +132,20 @@ export default class ListItem extends React.Component {
       }
     };
     const { slidesStyle } = styles;
-    const { listProduct, listItem } = this.state;
-    localStorage.setItem('listItem',JSON.stringify(listItem));
+    const { listProduct, listItem, listItemCheckOff } = this.state;
+    const props = {
+      listItem,
+      listItemCheckOff,
+      addItemCheckOut: this.addItemCheckOut,
+      deleteItem: this.deleteItem,
+      addCheckOffToItem: this.addCheckOffToItem,
+      deleteItemCheckOff: this.deleteItemCheckOff,
+      addAllCheckOffToItem: this.addAllCheckOffToItem,
+      deleteAllItemCheckOff: this.deleteAllItemCheckOff
+    
+    };
+    localStorage.setItem("listItem", JSON.stringify(listItem));
+    localStorage.setItem("listItemCheckOff", JSON.stringify(listItemCheckOff));
     return (
       <div className="list-page">
         <div className="shopping-list">
@@ -90,7 +162,7 @@ export default class ListItem extends React.Component {
               }}
             >
               <div className="form">
-                <div className="wrap-btn">
+                <div className="wrap-btn" onClick={this.addItemByInput}>
                   <div className="btn">
                     <div className="btn-icon">
                       <MaterialIcon icon="add" />
@@ -103,6 +175,7 @@ export default class ListItem extends React.Component {
                     className="add-input"
                     placeholder="Add Item"
                     name="name"
+                    ref="inputAdd"
                     onKeyDown={this.addItemByInput}
                   />
                 </div>
@@ -116,8 +189,7 @@ export default class ListItem extends React.Component {
                         ref="slide"
                         key={_index.toString()}
                         onClick={() => {
-                          console.log(item);
-                          this.addItem(item)
+                          this.addItem(item);
                         }}
                       >
                         <div className="wrap-slide-img">
@@ -152,33 +224,8 @@ export default class ListItem extends React.Component {
               </div>
             </div>
           </div>
-          <ul className="list-item">
-            {listItem.map(item => (
-              <li className="item-active">
-                <div className="wrap-img">
-                  <div
-                    className="img"
-                    style={{ backgroundImage: `url(${item.picture[0]})` }}
-                  />
-                </div>
-                <div className="wrap-name-item">
-                  <span className="name-item">{item.name}</span>
-                </div>
-                <div className="wrap-btn-item">
-                  <div className="btn">
-                    <div className="btn-icon">
-                      <MaterialIcon icon="done" />
-                    </div>
-                  </div>
-                  <div className="btn">
-                    <div className="btn-icon">
-                      <MaterialIcon icon="delete" />
-                    </div>
-                  </div>
-                </div>
-              </li>
-            ))}
-          </ul>
+          <ListItems {...props} />
+          {listItemCheckOff.length ? <ListCheckedOff {...props} /> : ""}
         </div>
       </div>
     );

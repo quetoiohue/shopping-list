@@ -57,7 +57,8 @@
     position: absolute;
     top: 7%;
     left: 1%;
-    display: inline-block;
+    display: inline-flex;
+    cursor: pointer;
 }
 .add-input {
     width: 100%;
@@ -161,7 +162,7 @@
 }
 .list-item{
     list-style-type: none;
-    background: yellowgreen;
+    background: #fff;
 }
 .item-active {
     padding: 0px 10px;
@@ -173,6 +174,20 @@
     height: 72px;
     cursor: pointer;
     transition: background .5s;
+}
+.item-title{
+    padding: 0px 10px;
+    display: flex;
+    border-bottom: 1px solid rgba(206, 43, 43, 0.1);
+    align-items: center;
+    justify-content: space-between;
+    overflow: hidden;
+    height: 72px;
+    cursor: pointer;
+    transition: background .5s;
+    font-size: 1rem;
+    opacity: 0.6;
+    color: rgba(0, 0, 0 , 0.8);
 }
 .item-active:hover{
     background: rgba(0,0,0,0.1);
