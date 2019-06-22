@@ -227,3 +227,13 @@
     margin-right: 5px;
     display: inline-block;
 }
+.title-cate{
+    font-size: 1.3rem;
+    color: rgba(0, 0, 0 , 0.8);
+    font-weight: 450;   
+    font-family: "Roboto", sans-serif;
+}
+.title-cate:hover{
+    background: #fff;
+    cursor: default;
+}

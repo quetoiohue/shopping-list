@@ -1,17 +1,30 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import MaterialIcon from "material-icons-react";
-import '../list-item-shopping/list-check-off/ListCheckedOff.css';
-import './Header.css';
+import "../list-item-shopping/list-check-off/ListCheckedOff.css";
+import "./Header.css";
 import { makeStyles } from "@material-ui/core/styles";
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import Check from '@material-ui/icons/Check';
-// import Empty from '@material-ui/icons/'
+import ListItemIcon from "@material-ui/core/ListItemIcon";
+import Check from "@material-ui/icons/Check";
+
 export default class Header extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      isOpenSort: false,
+    };    
+  }
+
+  setIsOpenSort = () => {
+    this.setState({
+      isOpenSort: !this.state.isOpenSort
+    });
+  };
   render() {
+    const { isOpenSort } = this.state;
     return (
       <div className="header">
         <div className="header-inner">
@@ -24,23 +37,32 @@ export default class Header extends React.Component {
             <h3 className="title-header">
               <a className="logo-link">Shopping List</a>
             </h3>
-            <div className="container-btn-right">
-              <CardOptions />
-            <div className="wrap-btn-right">
-              <div 
-              className="btn right-btn"
-              onClick={() => {}}
-              >
-                <div className="btn-icon">
-                  <MaterialIcon icon="sort" />
+            <div 
+            className="container-btn-right"
+            >
+              {isOpenSort ? (
+                <CardOptions 
+                {...this.props}/>
+              ) : (
+                ""
+              )}
+              <div className="wrap-btn-right">
+                <div
+                  className="btn right-btn"
+                  onClick={() => {
+                    this.setIsOpenSort();
+                  }}
+                >
+                  <div className="btn-icon">
+                    <MaterialIcon icon="sort" />
+                  </div>
+                </div>
+                <div className="btn right-btn">
+                  <div className="btn-icon">
+                    <MaterialIcon icon="person_add" />
+                  </div>
                 </div>
               </div>
-              <div className="btn right-btn">
-                <div className="btn-icon">
-                  <MaterialIcon icon="person_add" />
-                </div>
-              </div>
-            </div>
             </div>
           </div>
         </div>
@@ -49,89 +71,123 @@ export default class Header extends React.Component {
   }
 }
 
-const useStyles = makeStyles(theme => ({
-  root: {
-    width: "100%",
-    maxWidth: 360,
-    backgroundColor: theme.palette.background.paper
-  },
-  nested: {
-    paddingLeft: theme.spacing(4)
-  },
+const useStyles = {
   nameOption: {
     padding: "0px 24px !important",
-    
     fontFamily: "Roboto, sans-serif",
     textOverflow: "ellipsis",
     textAlign: "left",
     height: "48px",
-    color: "rgb(95, 99, 104)",
-  },
-}));
-
-const CardOptions = props => {
-  const classes = useStyles();
-  const [isOrder, setisOrder] = useState(false);
-  const [isCategory, setisCategory] = useState(false);
-  const [isAlpha, setisAlpha] = useState(false);
-
-  console.log(props);
-
-  const setSortOrder = (event) => {
-    event.preventDefault();
-    setisOrder(!isOrder);
-    setisCategory(false);
-    setisAlpha(false);
+    color: "rgb(95, 99, 104)"
   }
-
-  const setSortCategory = (event) => {
-    event.preventDefault();
-    setisCategory(!isCategory);
-    setisOrder(false);
-    setisAlpha(false);
-  }
-
-  const setSortAlpha = (event) => {
-    event.preventDefault();
-    setisAlpha(!isAlpha);
-    setisCategory(false);
-    setisOrder(false);
-  }
-  return (
-    <List component="nav" className="card-option card-category">
-      <ListItem
-        button
-        className={`${classes.nameOption}`}
-        onClick={(event) => setSortOrder(event)}
-      >
-        { isOrder ? <ListItemIcon>
-          <Check />
-        </ListItemIcon> : <ListItemIcon></ListItemIcon>}
-        
-        <ListItemText>Order added</ListItemText>
-      </ListItem>
-      <Divider />
-      <ListItem
-        button
-        className={`${classes.nameOption}`}
-        onClick={(event) => setSortCategory(event)}
-      >
-        { isCategory ? <ListItemIcon>
-          <Check />
-        </ListItemIcon> :<ListItemIcon></ListItemIcon>}
-        <ListItemText>Category</ListItemText>
-      </ListItem>
-      <Divider />
-      <ListItem
-        button
-        className={`${classes.nameOption}`}
-        onClick={(event) => setSortAlpha(event)}
-      >
-        { isAlpha ? <ListItemIcon>
-          <Check />
-        </ListItemIcon> : <ListItemIcon></ListItemIcon>}
-        <ListItemText >Alphabetical</ListItemText>
-      </ListItem>
-    </List>
-  );
 };
+
+class CardOptions extends React.Component {
+  constructor(props) {
+    super(props);
+    const getIsSort = JSON.parse(localStorage.getItem('isSort'));
+    this.state = {
+      isSort: getIsSort || {isOrder: true, isCategory: false, isAlpha: false},
+      classes: useStyles,
+    }; 
+    console.log("header : ", this.props);   
+  }
+
+  setSortOrder = event => {
+    event.preventDefault();
+    this.setState(
+      {
+        isSort: {
+          isOrder: true,
+          isCategory: false,
+          isAlpha: false
+        }
+      },
+      () => this.props.callBack(this.state.isSort)
+    );
+    
+  };
+
+  setSortCategory = event => {
+    event.preventDefault();
+    this.setState(
+      {
+        isSort: {
+          isOrder: false,
+          isCategory: true,
+          isAlpha: false
+        }
+      },
+      () => this.props.callBack(this.state.isSort)
+    );
+  };
+
+  setSortAlpha = event => {
+    event.preventDefault();
+    this.setState(
+      {
+        isSort: {
+          isOrder: false,
+          isCategory: false,
+          isAlpha: true
+        }
+      },
+      () => this.props.callBack(this.state.isSort)
+    );
+  };
+  render() {
+    const { isSort } = this.state;
+    const { isOrder, isCategory, isAlpha } = isSort;
+    localStorage.setItem('isSort', JSON.stringify(isSort));
+    const classes = this.state;
+    return (
+      <List component="nav" className="card-option card-category">
+        <ListItem
+          button
+          className={`${classes.nameOption}`}
+          onClick={this.setSortOrder}
+        >
+          {isOrder ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : (
+            <ListItemIcon />
+          )}
+
+          <ListItemText>Order added</ListItemText>
+        </ListItem>
+        <Divider />
+        <ListItem
+          button
+          className={`${classes.nameOption}`}
+          onClick={this.setSortCategory}
+        >
+          {isCategory ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : (
+            <ListItemIcon />
+          )}
+          <ListItemText>Category</ListItemText>
+        </ListItem>
+        <Divider />
+        <ListItem
+          button
+          className={`${classes.nameOption}`}
+          onClick={this.setSortAlpha}
+        >
+          {isAlpha ? (
+            <ListItemIcon>
+              <Check />
+            </ListItemIcon>
+          ) : (
+            <ListItemIcon />
+          )}
+          <ListItemText>Alphabetical</ListItemText>
+        </ListItem>
+      </List>
+    );
+  }
+}

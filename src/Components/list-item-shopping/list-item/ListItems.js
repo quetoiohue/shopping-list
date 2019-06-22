@@ -3,8 +3,6 @@ import MaterialIcon from "material-icons-react";
 
 const ListItems = props => {
   const { listItem } = props;
-  console.log(listItem);
-
   return (
     <ul className="list-item">
       {listItem.map((item, index) => (
@@ -19,7 +17,7 @@ const ListItems = props => {
             <span className="name-item">{item.name}</span>
           </div>
           <div className="wrap-btn-item">
-            <div className="btn" onClick={() => props.addItemCheckOut(index)}>
+            <div className="btn" onClick={() => props.addItemCheckOut(item)}>
               <div className="btn-icon">
                 <MaterialIcon icon="done" />
               </div>
@@ -27,7 +25,7 @@ const ListItems = props => {
             <div
               className="btn"
               onClick={() => {
-                props.deleteItem(index);
+                props.deleteItem(item);
               }}
             >
               <div className="btn-icon">

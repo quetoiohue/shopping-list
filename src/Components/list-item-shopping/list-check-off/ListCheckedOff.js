@@ -122,7 +122,6 @@ const useStyles = makeStyles(theme => ({
 
 const CardOption = props => {
   const classes = useStyles();
-  console.log(props);
 
   return (
     <List component="nav" className="card-option" aria-label="Mailbox folders">

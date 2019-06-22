@@ -4,6 +4,8 @@ import MaterialIcon from "material-icons-react";
 import data from "./data/data";
 import ListCheckedOff from "./list-check-off/ListCheckedOff";
 import ListItems from "./list-item/ListItems";
+import OrderCategoryList from './order-category-list/OrderCategoryList';
+
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
@@ -12,14 +14,18 @@ const getListItemCheckOff = JSON.parse(localStorage.getItem("listItemCheckOff"))
 
 export default class ListItemShopping extends React.Component {
   constructor(props) {
+    const getStateSort = JSON.parse(localStorage.getItem('isSort'));
     super(props);
     this.state = {
       translateX: 0,
       listProduct: data.listProduct,
       listItem: getListItem || [],
-      listItemCheckOff: getListItemCheckOff || []
+      listItemCheckOff: getListItemCheckOff || [],
+      stateSort: getStateSort || {isOrder: true, isCategory: false, isAlpha: false}
     };
+    console.log("list : ", this.props);     
   }
+ 
   prevSlide = event => {
     const { translateX } = this.state;
     const { slide } = this.refs;
@@ -27,7 +33,6 @@ export default class ListItemShopping extends React.Component {
       this.setState({
         translateX: translateX + slide.offsetWidth * numberOfSlide
       });
-      console.log(translateX);
     } else {
       return;
     }
@@ -49,7 +54,6 @@ export default class ListItemShopping extends React.Component {
     this.setState({
       listItem
     });
-    console.log(JSON.stringify(listItem));
   };
 
   addItemByInput = event => {
@@ -73,18 +77,18 @@ export default class ListItemShopping extends React.Component {
     }
   };
 
-  deleteItem = index => {
+  deleteItem = item => {
     const { listItem } = this.state;
-    listItem.splice(index, 1);
+    listItem.splice(listItem.findIndex(e => e === item), 1);
     this.setState({
       listItem
     });
   };
 
-  addItemCheckOut = index => {
+  addItemCheckOut = item => {
     const { listItem, listItemCheckOff } = this.state;
-    listItemCheckOff.unshift(listItem[index]);
-    listItem.splice(index, 1);
+    listItemCheckOff.unshift(item);
+    listItem.splice(listItem.findIndex(e => e === item), 1);
     this.setState({
       listItem,
       listItemCheckOff
@@ -111,18 +115,15 @@ export default class ListItemShopping extends React.Component {
   addAllCheckOffToItem = () => {
     const { listItemCheckOff, listItem } = this.state;
     const listItems = listItem.concat(listItemCheckOff);
-    console.log(listItem);
     this.setState({
       listItem: listItems,
       listItemCheckOff: [],
     })  
   }
   deleteAllItemCheckOff = () => {
-    const { listItemCheckOff } = this.state;  
     this.setState({
       listItemCheckOff: []
     })  
-    console.log(listItemCheckOff);
   }
   render() {
     const styles = {
@@ -132,7 +133,7 @@ export default class ListItemShopping extends React.Component {
       }
     };
     const { slidesStyle } = styles;
-    const { listProduct, listItem, listItemCheckOff } = this.state;
+    const { listProduct, listItem, listItemCheckOff, stateSort } = this.state;
     const props = {
       listItem,
       listItemCheckOff,
@@ -142,8 +143,8 @@ export default class ListItemShopping extends React.Component {
       deleteItemCheckOff: this.deleteItemCheckOff,
       addAllCheckOffToItem: this.addAllCheckOffToItem,
       deleteAllItemCheckOff: this.deleteAllItemCheckOff
-    
     };
+    
     localStorage.setItem("listItem", JSON.stringify(listItem));
     localStorage.setItem("listItemCheckOff", JSON.stringify(listItemCheckOff));
     return (
@@ -224,7 +225,8 @@ export default class ListItemShopping extends React.Component {
               </div>
             </div>
           </div>
-          <ListItems {...props} />
+          {stateSort.isOrder === true ? <ListItems {...props} /> : ""}
+          {stateSort.isCategory === true ? <OrderCategoryList {...props}/> : ""}
           {listItemCheckOff.length ? <ListCheckedOff {...props} /> : ""}
         </div>
       </div>
