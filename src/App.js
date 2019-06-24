@@ -1,6 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 import Header from "./Components/header/Header";
 import ListItemShopping from "./Components/list-item-shopping/ListItemShopping";
+import MenuDrawer from './Components/header/menu-drawer/MenuDrawer';
 import "./App.css";
 
 class App extends React.Component {
@@ -15,12 +16,6 @@ class App extends React.Component {
     this.setState({ stateSort });
   };
 
-  componentDidMount() {
-    const { stateSort } = this.state;
-    this.setState({
-      stateSort
-    });
-  }
   render() {
     const { stateSort } = this.state;
     return (
@@ -28,6 +23,7 @@ class App extends React.Component {
         <header className="App-header">
           <Header callBack={this.callBack} />
           <ListItemShopping stateSort={stateSort} />
+          <MenuDrawer />
         </header>
       </div>
     );

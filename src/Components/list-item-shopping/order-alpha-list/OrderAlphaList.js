@@ -1,28 +1,25 @@
-import React, { useState } from "react";
-import MaterialIcon from "material-icons-react";
+import React, { useState } from 'react';
+import MaterialIcon from 'material-icons-react';
 
-const OrderCategoryList = props => {
-  const { listItem } = props;
-  const [listCategory] = useState([
-    { idCate: 1, nameCate: "Beverages" },
-    { idCate: 2, nameCate: "Dairy & Eggs" },
-    { idCate: 3, nameCate: "Home & Garden" },
-    { idCate: 4, nameCate: "Meat & Seafood" },
-    { idCate: 5, nameCate: "Produce" }
-  ]);
-  
-  return (
-    <ul className="list-item">
-      {listCategory.map((itemCate, index) => (
-        <div className="item-cate">
-            { listItem
-              .filter(e => e.idCate === itemCate.idCate)
-              .length > 0 ? <span className="item-active title-cate">{itemCate.nameCate}</span> : "" }
-          
-          <ul className="list-item">
-            {listItem
-              .filter(e => e.idCate === itemCate.idCate)
-              .map((item, index) => (
+const OrderAlphaList = (props) => {
+    const { listItem } = props;
+    const [ listAlpha ] = useState([
+        'A' , 'B', 'C'
+    ]);
+    
+    return(
+        <ul className="list-item">
+        { listAlpha.map((items, index) => 
+            ( listItem
+                .filter(e => e.name.indexOf(items) === 0)
+                .sort((a, b) =>  {
+                    let nameA = a.name.toUpperCase();
+                    let nameB = b.name.toUpperCase();
+                    if(nameA < nameB) return -1;
+                    if(nameA > nameB) return 1;
+                    return 0;    
+                })
+                .map((item, index) => (
                 <li className="item-active" key={index.toString()}>
                   <div className="wrap-img">
                     <div
@@ -54,11 +51,9 @@ const OrderCategoryList = props => {
                     </div>
                   </div>
                 </li>
-              ))}
-          </ul>
-        </div>
-      ))}
+              ))))}
     </ul>
-  );
-};
-export default OrderCategoryList;
+    )
+}
+
+export default OrderAlphaList;

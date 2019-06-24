@@ -9,63 +9,110 @@ import ListItemText from "@material-ui/core/ListItemText";
 import Divider from "@material-ui/core/Divider";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Check from "@material-ui/icons/Check";
+import MenuDrawer from "./menu-drawer/MenuDrawer";
 
 export default class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpenSort: false,
-    };    
+      left: false
+    };
   }
 
-  setIsOpenSort = () => {
+  componentWillMount() {
+    document.addEventListener("mousedown", this.handleClick, false);
+  }
+
+  componentWillUnmount() {
+    document.addEventListener("mousedown", this.handleClick, false);
+  }
+
+  handleClick = e => {
+    console.log("this.node>>", this.node);
+    console.log("e.target>>", e.target);
+    console.log("Ref >> ", this.refs.notBtnSort);
+    const { notBtnSort } = this.refs;
+    
+    if (this.node && this.node.contains(e.target) && !notBtnSort.contains(e.target)) {
+      return;
+    }
+    this.setIsOpenSort(false);
+  };
+
+  setIsOpenSort = open => {
     this.setState({
-      isOpenSort: !this.state.isOpenSort
+      isOpenSort: open
     });
   };
+
+  toggleDrawer = (event, open) => {
+    if (
+      event.type === "keydown" &&
+      (event.key === "Tab" || event.key === "Shift")
+    ) {
+      return;
+    }
+
+    this.setState({ left: open });
+  };
+
   render() {
-    const { isOpenSort } = this.state;
+    const { isOpenSort, left } = this.state;
+    const props = {
+      left,
+      toggleDrawer: this.toggleDrawer,
+      setIsOpenSort: this.setIsOpenSort
+    };
     return (
-      <div className="header">
-        <div className="header-inner">
-          <div className="btn left-btn">
-            <div className="btn-icon">
-              <MaterialIcon icon="menu" />
+      <div>
+        <div className="header">
+          <div className="header-inner">
+            <div className="btn left-btn">
+              <div
+                className="btn-icon"
+                onClick={e => {
+                  this.toggleDrawer(e, true);
+                }}
+              >
+                <MaterialIcon icon="menu" />
+              </div>
             </div>
-          </div>
-          <div className="header-content">
-            <h3 className="title-header">
-              <a className="logo-link">Shopping List</a>
-            </h3>
-            <div 
-            className="container-btn-right"
-            >
-              {isOpenSort ? (
-                <CardOptions 
-                {...this.props}/>
-              ) : (
-                ""
-              )}
-              <div className="wrap-btn-right">
-                <div
-                  className="btn right-btn"
-                  onClick={() => {
-                    this.setIsOpenSort();
-                  }}
-                >
-                  <div className="btn-icon">
-                    <MaterialIcon icon="sort" />
+            <div className="header-content">
+              <h3 className="title-header">
+                <a className="logo-link">Shopping List</a>
+              </h3>
+              <div
+                ref={node => (this.node = node)}
+                className="container-btn-right"
+              >
+                {isOpenSort ? <CardOptions {...this.props} {...props} /> : ""}
+                <div className="wrap-btn-right">
+                  <div
+                    className="btn right-btn"
+                    onClick={event => {
+                      this.setIsOpenSort(!isOpenSort);
+                    }}
+                  >
+                    <div className="btn-icon">
+                      <MaterialIcon icon="sort" />
+                    </div>
                   </div>
-                </div>
-                <div className="btn right-btn">
-                  <div className="btn-icon">
-                    <MaterialIcon icon="person_add" />
+                  <div className="btn right-btn"
+                    ref='notBtnSort'
+                  >
+                    <div className="btn-icon"
+                    >
+                      <MaterialIcon icon="person_add" 
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+        <MenuDrawer {...props} />
       </div>
     );
   }
@@ -85,12 +132,12 @@ const useStyles = {
 class CardOptions extends React.Component {
   constructor(props) {
     super(props);
-    const getIsSort = JSON.parse(localStorage.getItem('isSort'));
+    const getIsSort = JSON.parse(localStorage.getItem("isSort"));
     this.state = {
-      isSort: getIsSort || {isOrder: true, isCategory: false, isAlpha: false},
-      classes: useStyles,
-    }; 
-    console.log("header : ", this.props);   
+      isSort: getIsSort || { isOrder: true, isCategory: false, isAlpha: false },
+      classes: useStyles
+    };
+    console.log(this.props);
   }
 
   setSortOrder = event => {
@@ -103,9 +150,10 @@ class CardOptions extends React.Component {
           isAlpha: false
         }
       },
-      () => this.props.callBack(this.state.isSort)
+      () => {
+        this.props.callBack(this.state.isSort);
+      }
     );
-    
   };
 
   setSortCategory = event => {
@@ -135,10 +183,11 @@ class CardOptions extends React.Component {
       () => this.props.callBack(this.state.isSort)
     );
   };
+
   render() {
     const { isSort } = this.state;
     const { isOrder, isCategory, isAlpha } = isSort;
-    localStorage.setItem('isSort', JSON.stringify(isSort));
+    localStorage.setItem("isSort", JSON.stringify(isSort));
     const classes = this.state;
     return (
       <List component="nav" className="card-option card-category">

@@ -4,28 +4,28 @@ import MaterialIcon from "material-icons-react";
 import data from "./data/data";
 import ListCheckedOff from "./list-check-off/ListCheckedOff";
 import ListItems from "./list-item/ListItems";
-import OrderCategoryList from './order-category-list/OrderCategoryList';
-
+import OrderCategoryList from "./order-category-list/OrderCategoryList";
+import OrderAlphaList from "./order-alpha-list/OrderAlphaList";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
 const getListItem = JSON.parse(localStorage.getItem("listItem"));
-const getListItemCheckOff = JSON.parse(localStorage.getItem("listItemCheckOff"));
+const getListItemCheckOff = JSON.parse(
+  localStorage.getItem("listItemCheckOff")
+);
 
 export default class ListItemShopping extends React.Component {
   constructor(props) {
-    const getStateSort = JSON.parse(localStorage.getItem('isSort'));
+    const getStateSort = JSON.parse(localStorage.getItem("isSort"));
     super(props);
     this.state = {
       translateX: 0,
       listProduct: data.listProduct,
       listItem: getListItem || [],
-      listItemCheckOff: getListItemCheckOff || [],
-      stateSort: getStateSort || {isOrder: true, isCategory: false, isAlpha: false}
+      listItemCheckOff: getListItemCheckOff || []
     };
-    console.log("list : ", this.props);     
   }
- 
+
   prevSlide = event => {
     const { translateX } = this.state;
     const { slide } = this.refs;
@@ -117,14 +117,14 @@ export default class ListItemShopping extends React.Component {
     const listItems = listItem.concat(listItemCheckOff);
     this.setState({
       listItem: listItems,
-      listItemCheckOff: [],
-    })  
-  }
+      listItemCheckOff: []
+    });
+  };
   deleteAllItemCheckOff = () => {
     this.setState({
       listItemCheckOff: []
-    })  
-  }
+    });
+  };
   render() {
     const styles = {
       slidesStyle: {
@@ -133,8 +133,10 @@ export default class ListItemShopping extends React.Component {
       }
     };
     const { slidesStyle } = styles;
-    const { listProduct, listItem, listItemCheckOff, stateSort } = this.state;
+    const { listProduct, listItem, listItemCheckOff } = this.state;
+    const { stateSort } = this.props;
     const props = {
+      stateSort,
       listItem,
       listItemCheckOff,
       addItemCheckOut: this.addItemCheckOut,
@@ -144,7 +146,7 @@ export default class ListItemShopping extends React.Component {
       addAllCheckOffToItem: this.addAllCheckOffToItem,
       deleteAllItemCheckOff: this.deleteAllItemCheckOff
     };
-    
+
     localStorage.setItem("listItem", JSON.stringify(listItem));
     localStorage.setItem("listItemCheckOff", JSON.stringify(listItemCheckOff));
     return (
@@ -226,7 +228,12 @@ export default class ListItemShopping extends React.Component {
             </div>
           </div>
           {stateSort.isOrder === true ? <ListItems {...props} /> : ""}
-          {stateSort.isCategory === true ? <OrderCategoryList {...props}/> : ""}
+          {stateSort.isCategory === true ? (
+            <OrderCategoryList {...props} />
+          ) : (
+            ""
+          )}
+          {stateSort.isAlpha === true ? <OrderAlphaList {...props} /> : ""}
           {listItemCheckOff.length ? <ListCheckedOff {...props} /> : ""}
         </div>
       </div>
