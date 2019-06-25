@@ -6,6 +6,8 @@ import ListCheckedOff from "./list-check-off/ListCheckedOff";
 import ListItems from "./list-item/ListItems";
 import OrderCategoryList from "./order-category-list/OrderCategoryList";
 import OrderAlphaList from "./order-alpha-list/OrderAlphaList";
+import RecommenList from "./recommend-list/RecommendList";
+import ReactDOM from "react-dom";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
@@ -20,11 +22,23 @@ export default class ListItemShopping extends React.Component {
     super(props);
     this.state = {
       translateX: 0,
+      textInput: "",
+      openRecommend: false,
       listProduct: data.listProduct,
       listItem: getListItem || [],
       listItemCheckOff: getListItemCheckOff || []
     };
+
+    this.recommend = React.createRef();
   }
+
+  onChangeInput = event => {
+    const { textInput } = this.state;
+    this.setState({
+      textInput: event.target.value
+    });
+    this.openRecommend(true);
+  };
 
   prevSlide = event => {
     const { translateX } = this.state;
@@ -59,14 +73,16 @@ export default class ListItemShopping extends React.Component {
   addItemByInput = event => {
     const { listItem, listProduct } = this.state;
     if (event.key === "Enter") {
-      const { value } = this.refs.inputAdd;
-      if (value) {
-        const getItem = listProduct.find(item => item.name === value);
+      const { textInput } = this.state;
+      if (textInput) {
+        const getItem = listProduct.find(item =>
+          item.name.toUpperCase().contains(textInput.toUpperCase())
+        );
         listItem.unshift(
           getItem
             ? getItem
             : {
-                name: value,
+                name: textInput,
                 picture: ["http://chittagongit.com/download/117414"]
               }
         );
@@ -125,6 +141,34 @@ export default class ListItemShopping extends React.Component {
       listItemCheckOff: []
     });
   };
+
+  openRecommend = open => {
+    this.setState({
+      openRecommend: open
+    });
+  };
+
+  componentWillMount() {
+    document.addEventListener("mousedown", this.handleClicks);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener("mousedown", this.handleClicks);
+  }
+
+  handleClicks = event => {
+    const node = this.node;
+    const { inputAdd } = this.refs;
+    if (
+      (node && node.contains(event.target)) ||
+      inputAdd.contains(event.target)
+    ) {
+      return;
+    }
+
+    this.openRecommend(false);
+  };
+
   render() {
     const styles = {
       slidesStyle: {
@@ -133,12 +177,21 @@ export default class ListItemShopping extends React.Component {
       }
     };
     const { slidesStyle } = styles;
-    const { listProduct, listItem, listItemCheckOff } = this.state;
+    const {
+      listProduct,
+      listItem,
+      listItemCheckOff,
+      textInput,
+      openRecommend
+    } = this.state;
     const { stateSort } = this.props;
     const props = {
+      textInput,
       stateSort,
       listItem,
       listItemCheckOff,
+      listProduct,
+      addItem: this.addItem,
       addItemCheckOut: this.addItemCheckOut,
       deleteItem: this.deleteItem,
       addCheckOffToItem: this.addCheckOffToItem,
@@ -180,6 +233,8 @@ export default class ListItemShopping extends React.Component {
                     name="name"
                     ref="inputAdd"
                     onKeyDown={this.addItemByInput}
+                    onChange={this.onChangeInput}
+                    autoComplete="off"
                   />
                 </div>
               </div>
@@ -226,6 +281,9 @@ export default class ListItemShopping extends React.Component {
                 </div>
               </div>
             </div>
+          </div>
+          <div ref={node => (this.node = node)}>
+            {openRecommend === true ? <RecommenList {...props} /> : ""}
           </div>
           {stateSort.isOrder === true ? <ListItems {...props} /> : ""}
           {stateSort.isCategory === true ? (

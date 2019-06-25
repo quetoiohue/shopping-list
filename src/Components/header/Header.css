@@ -12,7 +12,8 @@
   right: 0;
   z-index: 200;
   padding: 0px 16px;
-  box-shadow: 0px 0px 4px 
+  box-shadow: 0px 0px 4px;
+  background: #fafafa;
 }
 .header .header-inner {
   padding: 5px 16px;
@@ -58,6 +59,10 @@
 }
 .title-header{
     padding: 5px;
+  display: block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis; 
 }
 .title-header .logo-link{
   text-decoration: none;

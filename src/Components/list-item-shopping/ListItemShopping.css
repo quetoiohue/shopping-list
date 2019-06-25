@@ -210,14 +210,18 @@
 .wrap-name-item{
     height: 100%;
     width: 100%;
+   overflow: hidden;
 }
 .name-item {
     text-align: left;
     display: block;
-    width: 100%;
+    max-width: 100%;
     padding-left: 15px;
     line-height: 69px;
     font-size: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis; 
 }
 .wrap-btn-item{
     display: flex;

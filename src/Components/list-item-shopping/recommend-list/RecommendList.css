@@ -1,0 +1,31 @@
+.wrap-recommend-list{
+    position: fixed;
+    top: 23%;
+    right: 50%;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    max-height: 350px;
+    overflow-x: hidden;
+    box-shadow: 0 2px 4px -1px rgba(0,0,0,0.2);
+    /* border-top: 1.3px solid rgba(0, 0, 0, .1); */
+    font-weight: 500;
+    letter-spacing: .2px;
+    font-size: 15px;
+    font-family: "Roboto", sans-serif;
+    cursor: pointer;
+    max-width: 600px;
+    width: 100%;
+}
+.recommend-item{
+    list-style-type: none;
+    height: 48px;
+    line-height: 48px;
+    padding: 0px 16px;
+    text-align: left;
+    overflow: hidden;
+    display: flex;
+}
+.recommend-item:hover{
+    background: rgba(0, 0, 0, 0.2);
+}
