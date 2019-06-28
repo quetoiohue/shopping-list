@@ -7,7 +7,6 @@ import ListItems from "./list-item/ListItems";
 import OrderCategoryList from "./order-category-list/OrderCategoryList";
 import OrderAlphaList from "./order-alpha-list/OrderAlphaList";
 import RecommenList from "./recommend-list/RecommendList";
-import ReactDOM from "react-dom";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
@@ -18,22 +17,24 @@ const getListItemCheckOff = JSON.parse(
 
 export default class ListItemShopping extends React.Component {
   constructor(props) {
-    const getStateSort = JSON.parse(localStorage.getItem("isSort"));
     super(props);
     this.state = {
       translateX: 0,
       textInput: "",
       openRecommend: false,
+      isSelectAll: false,
       listProduct: data.listProduct,
       listItem: getListItem || [],
       listItemCheckOff: getListItemCheckOff || []
     };
-
-    this.recommend = React.createRef();
   }
-
+  triggerSelectAll = open => {
+    this.setState({
+      isSelectAll: open
+    });
+    console.log(this.state.isSelectAll);
+  };
   onChangeInput = event => {
-    const { textInput } = this.state;
     this.setState({
       textInput: event.target.value
     });
@@ -64,7 +65,14 @@ export default class ListItemShopping extends React.Component {
   };
   addItem = item => {
     const { listItem } = this.state;
-    listItem.unshift(item);
+    let newItem = {
+      name: item.name,
+      picture: item.picture,
+      idCate: item.idCate,
+      quantity: 1,
+      note: ""
+    };
+    listItem.unshift(newItem);
     this.setState({
       listItem
     });
@@ -76,14 +84,24 @@ export default class ListItemShopping extends React.Component {
       const { textInput } = this.state;
       if (textInput) {
         const getItem = listProduct.find(item =>
-          item.name.toUpperCase().contains(textInput.toUpperCase())
+         item.name.toUpperCase() === textInput.toUpperCase()
         );
+        let newItem = {
+          name: getItem.name,
+          picture: getItem.picture,
+          idCate: getItem.idCate,
+          quantity: 1,
+          note: ""
+        };
         listItem.unshift(
           getItem
-            ? getItem
+            ? newItem
             : {
                 name: textInput,
-                picture: ["http://chittagongit.com/download/117414"]
+                picture: ["http://chittagongit.com/download/117414"],
+                idCate: 6,
+                quantity: 1,
+                note: ""
               }
         );
       }
@@ -158,17 +176,27 @@ export default class ListItemShopping extends React.Component {
 
   handleClicks = event => {
     const node = this.node;
+    console.log(node);
+    
     const { inputAdd } = this.refs;
-    if (
-      (node && node.contains(event.target)) ||
-      inputAdd.contains(event.target)
-    ) {
-      return;
+    if (node) {
+      if (node.contains(event.target) || inputAdd.contains(event.target)) {
+        return;
+      }
     }
 
     this.openRecommend(false);
   };
 
+  onChangeInfoItem = (index, name, quantity, note) => {
+    const { listItem } = this.state;
+    listItem[index].name = name;
+    listItem[index].quantity = quantity;
+    listItem[index].note = note;
+    this.setState({
+      listItem
+    });
+  };
   render() {
     const styles = {
       slidesStyle: {
@@ -182,7 +210,8 @@ export default class ListItemShopping extends React.Component {
       listItem,
       listItemCheckOff,
       textInput,
-      openRecommend
+      openRecommend,
+      isSelectAll
     } = this.state;
     const { stateSort } = this.props;
     const props = {
@@ -197,7 +226,9 @@ export default class ListItemShopping extends React.Component {
       addCheckOffToItem: this.addCheckOffToItem,
       deleteItemCheckOff: this.deleteItemCheckOff,
       addAllCheckOffToItem: this.addAllCheckOffToItem,
-      deleteAllItemCheckOff: this.deleteAllItemCheckOff
+      deleteAllItemCheckOff: this.deleteAllItemCheckOff,
+      onChangeInfoItem: this.onChangeInfoItem,
+      triggerSelectAll: this.triggerSelectAll
     };
 
     localStorage.setItem("listItem", JSON.stringify(listItem));
@@ -206,81 +237,87 @@ export default class ListItemShopping extends React.Component {
       <div className="list-page">
         <div className="shopping-list">
           <div className="top-bar">
-            <div
-              className="add-input-item"
-              onFocus={() => {
-                const { carousel } = this.refs;
-                carousel.style.display = "flex";
-              }}
-              onDoubleClickCapture={() => {
-                const { carousel } = this.refs;
-                carousel.style.display = "none";
-              }}
-            >
-              <div className="form">
-                <div className="wrap-btn" onClick={this.addItemByInput}>
-                  <div className="btn">
-                    <div className="btn-icon">
-                      <MaterialIcon icon="add" />
+            {isSelectAll ? (
+              <div className="add-input-item wrap-select-all">
+                <div className="select-all-text">SELECT ALL</div>
+              </div>
+            ) : (
+              <div
+                className="add-input-item"
+                onFocus={() => {
+                  const { carousel } = this.refs;
+                  carousel.style.display = "flex";
+                }}
+                onDoubleClickCapture={() => {
+                  const { carousel } = this.refs;
+                  carousel.style.display = "none";
+                }}
+              >
+                <div className="form">
+                  <div className="wrap-btn" onClick={this.addItemByInput}>
+                    <div className="btn">
+                      <div className="btn-icon">
+                        <MaterialIcon icon="add" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="wrap-add-input">
+                    <input
+                      type="text"
+                      className="add-input"
+                      placeholder="Add Item"
+                      name="name"
+                      ref="inputAdd"
+                      onKeyDown={this.addItemByInput}
+                      onChange={this.onChangeInput}
+                      autoComplete="off"
+                    />
+                  </div>
+                </div>
+                <div className="carousel" ref="carousel">
+                  <div className="carousel-inner">
+                    <div className="slides" style={slidesStyle}>
+                      {listProduct.map((item, _index) => (
+                        <div
+                          className="slide"
+                          ref="slide"
+                          key={_index.toString()}
+                          onClick={() => {
+                            this.addItem(item);
+                          }}
+                        >
+                          <div className="wrap-slide-img">
+                            <div
+                              className="slide-img"
+                              style={{
+                                backgroundImage: `url(${item.picture[0]})`
+                              }}
+                            />
+                          </div>
+                          <div className="wrap-slide-name">
+                            <span className="slide-name">{item.name}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div
+                      className="wrap-prev"
+                      onClick={this.prevSlide}
+                      ref="btnPrev"
+                    >
+                      <div className="prev" />
+                    </div>
+                    <div
+                      className="wrap-next"
+                      onClick={this.nextSlide}
+                      ref="btnNext"
+                    >
+                      <div className="next" />
                     </div>
                   </div>
                 </div>
-                <div className="wrap-add-input">
-                  <input
-                    type="text"
-                    className="add-input"
-                    placeholder="Add Item"
-                    name="name"
-                    ref="inputAdd"
-                    onKeyDown={this.addItemByInput}
-                    onChange={this.onChangeInput}
-                    autoComplete="off"
-                  />
-                </div>
               </div>
-              <div className="carousel" ref="carousel">
-                <div className="carousel-inner">
-                  <div className="slides" style={slidesStyle}>
-                    {listProduct.map((item, _index) => (
-                      <div
-                        className="slide"
-                        ref="slide"
-                        key={_index.toString()}
-                        onClick={() => {
-                          this.addItem(item);
-                        }}
-                      >
-                        <div className="wrap-slide-img">
-                          <div
-                            className="slide-img"
-                            style={{
-                              backgroundImage: `url(${item.picture[0]})`
-                            }}
-                          />
-                        </div>
-                        <div className="wrap-slide-name">
-                          <span className="slide-name">{item.name}</span>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div
-                    className="wrap-prev"
-                    onClick={this.prevSlide}
-                    ref="btnPrev"
-                  >
-                    <div className="prev" />
-                  </div>
-                  <div
-                    className="wrap-next"
-                    onClick={this.nextSlide}
-                    ref="btnNext"
-                  >
-                    <div className="next" />
-                  </div>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
           <div ref={node => (this.node = node)}>
             {openRecommend === true ? <RecommenList {...props} /> : ""}

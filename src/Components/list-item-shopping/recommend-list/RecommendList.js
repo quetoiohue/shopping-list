@@ -1,11 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, Fragment } from 'react';
 import './RecommendList.css';
 
 const RecommendList = (props) => {
-    const [ state, setState ] = useState({
-        recommendList : [],
-    });
-    console.log(props);
     const { listProduct , textInput } = props;
     return (
         <div className="wrap-recommend-list">

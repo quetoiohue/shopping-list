@@ -1,0 +1,129 @@
+* {
+  box-sizing: border-box;
+  /* padding: 0;
+    margin: 0 auto; */
+  font-size: 14px;
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.wrap-page {
+  margin: 0 auto;
+  width: 100%;
+  height: 100vh;
+}
+.containter-page {
+  width: 100%;
+  min-height: 100vh;
+  background-image: url("https://colorlib.com/etc/lf/Login_v4/images/bg-01.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-wrap: nowrap;
+  padding: 15px;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.container-form {
+  padding: 65px 55px 54px;
+  width: 500px;
+  background: #fff;
+  border-radius: 10px;
+  overflow: hidden;
+  height: 100%;
+}
+.container-form .form-login {
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  width: 100%;
+}
+.container-form .title-form {
+  padding-bottom: 49px;
+  text-align: center;
+  width: 100%;
+  display: block;
+}
+.container-form .form-login .title {
+  font-size: 39px;
+  display: inline-block;
+  font-weight: bold;
+  color: #333;
+  line-height: 1.2;
+}
+.container-form .wrap-input {
+  width: 100%;
+  position: relative;
+}
+
+.m-b-23 {
+  margin-bottom: 23px;
+}
+.text-right {
+  padding: 8px 0px 31px;
+  text-align: right;
+  display: block;
+}
+.text-right .text:hover {
+  color: #9575cd;
+}
+.text-right .text {
+  font-size: 14px;
+  line-height: 1.7;
+  color: #666;
+  cursor: pointer;
+}
+.text-option-login {
+  padding: 54px 0px 20px;
+  color: #666;
+  line-height: 1.5;
+  text-align: center; 
+}
+.wrap-input .MuiGrid-spacing-xs-1 {
+  width: calc(100% + 8px);
+  margin: -4px;
+  flex-wrap: nowrap;
+}
+.wrap-input .input-icon {
+  height: 50px;
+  width: 50px;
+  font-size: 32px;
+}
+.fab-icon {
+  font-size: 24px;
+  color: white;
+}
+.text-footer-form {
+  padding: 155px 0px 0px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+}
+.text-footer-form .text1,
+.text2 {
+  font-size: 14px;
+  line-height: 1.5;
+  color: #666;
+  padding: 0px 0px 17px;
+}
+.text2 {
+  cursor: pointer;
+  color: #333;
+  padding: 0;
+}
+.hide {
+  box-shadow: none !important;
+  padding: 0 !important;
+  
+}
+.hide div:first-child{
+  display: none !important;
+}
+.hide span{
+  padding: 0px !important;
+}

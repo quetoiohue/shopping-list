@@ -34,6 +34,7 @@ const ListCheckedOff = props => {
     }
   }
   return (
+    <>
     <List>
       <div className="wrap-title-checkoff">
         <ListItem
@@ -96,6 +97,7 @@ const ListCheckedOff = props => {
         </ul>
       </Collapse>
     </List>
+    </>
   );
 };
 

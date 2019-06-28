@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  background-color: #fafafa
+  background-color: #fafafa;
 }
 
 .App-header {
@@ -10,8 +10,14 @@
   flex-direction: column;
   font-size: calc(10px + 2vmin);
   color: #000000;
+  
 }
-
+.text-loading{
+  background: #333;
+   color: yellow;
+   justify-content: center;
+  align-items: center;
+}
 .App-link {
   color: #61dafb;
 }
@@ -23,4 +29,7 @@
   to {
     transform: rotate(360deg);
   }
+}
+* {
+  font-family: "Roboto", sans-serif ;
 }

@@ -19,7 +19,7 @@ export default class Header extends React.Component {
       left: false
     };
   }
-
+  
   componentWillMount() {
     document.addEventListener("mousedown", this.handleClick, false);
   }
@@ -29,9 +29,6 @@ export default class Header extends React.Component {
   }
 
   handleClick = e => {
-    console.log("this.node>>", this.node);
-    console.log("e.target>>", e.target);
-    console.log("Ref >> ", this.refs.notBtnSort);
     const { notBtnSort } = this.refs;
     
     if (this.node && this.node.contains(e.target) && !notBtnSort.contains(e.target)) {
@@ -62,7 +59,8 @@ export default class Header extends React.Component {
     const props = {
       left,
       toggleDrawer: this.toggleDrawer,
-      setIsOpenSort: this.setIsOpenSort
+      setIsOpenSort: this.setIsOpenSort,
+      dataUser: this.props.dataUser
     };
     return (
       <div>
@@ -112,7 +110,7 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <MenuDrawer {...props} />
+        <MenuDrawer {...props} {...this.props}/>
       </div>
     );
   }
@@ -137,7 +135,6 @@ class CardOptions extends React.Component {
       isSort: getIsSort || { isOrder: true, isCategory: false, isAlpha: false },
       classes: useStyles
     };
-    console.log(this.props);
   }
 
   setSortOrder = event => {

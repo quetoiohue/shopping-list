@@ -4,7 +4,10 @@
     box-sizing: border-box;
     transition: all .2s;
 }
-
+body {
+    padding-right: 0px !important;
+    overflow-y: scroll !important;
+}
 /* ======================List-item========================= */
 .list-page{
     display: block;
@@ -202,26 +205,59 @@
 .img {
     height: 40px;
     width: 40px;
-    /* background-image: url('../../images/item1.webp'); */
     background-size: 40px;
     background-repeat: no-repeat;
     background-position: center;
+    border-radius: 4px;
+    box-shadow: 0px 2px 2px rgba(0,0,0,.1);
 }
 .wrap-name-item{
     height: 100%;
     width: 100%;
    overflow: hidden;
+   display: flex;
+   flex-direction: column;
+   justify-content: center;
+   line-height: 1.4;
 }
 .name-item {
     text-align: left;
-    display: block;
+    display: inline-block;
     max-width: 100%;
     padding-left: 15px;
-    line-height: 69px;
-    font-size: 1rem;
+    /* line-height: 69px; */
+    font-size: 15px;;
+    font-family: "Roboto", sans-serif;
+    font-weight: 400;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis; 
+    color: rgb(32, 33, 36);
+}
+.info-item{
+    display: flex;
+    justify-content: left;
+    align-items: center;
+    padding: 0px 16px;
+    /* overflow: hidden; */
+    font-size: 14px;
+    color: rgb(154, 160, 166);
+    font-weight: 500;
+}
+.quantity-item{
+    white-space: nowrap;
+    max-width: 20%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.note-item::before{
+    content: "•";
+    padding: 0px 3px;
+}
+.note-item{
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
 }
 .wrap-btn-item{
     display: flex;
@@ -232,7 +268,7 @@
     display: inline-block;
 }
 .title-cate{
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     color: rgba(0, 0, 0 , 0.8);
     font-weight: 450;   
     font-family: "Roboto", sans-serif;
@@ -240,4 +276,19 @@
 .title-cate:hover{
     background: #fff;
     cursor: default;
+}
+.wrap-select-all {
+    text-align: left;
+    padding: 0px 15px;
+    height: 72px;
+}
+.select-all-text{
+    color: #4285f4;
+    letter-spacing: .3px;
+    padding: 10px;
+    display: inline-block;
+    box-sizing: border-box;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
 }

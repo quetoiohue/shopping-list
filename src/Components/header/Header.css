@@ -87,7 +87,7 @@
 }
 .btn-icon {
   font-size: 24px;
-  display: inline;
+  /* display: inline; */
 }
 .header .btn-left {
   position: absolute;

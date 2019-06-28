@@ -1,8 +1,7 @@
-import React from "react";
+import React, { Fragment } from "react";
 import { makeStyles } from "@material-ui/core/styles";
 import MaterialIcon from "material-icons-react";
 import Drawer from "@material-ui/core/Drawer";
-import Button from "@material-ui/core/Button";
 import "./MenuDrawer.css";
 import {
   ListItem,
@@ -27,14 +26,34 @@ const useStyles = makeStyles({
 const MenuDrawer = props => {
   const classes = useStyles();
 
+  //****get info facebook
+  // const { id, name, picture } = props.dataUser;
+  // const urlProfile = picture.data.url;
+
+ const clickLogOut = () => {
+   debugger
+    props.history.push("/");
+    localStorage.removeItem("tokenGoogle");
+    return;
+  };
+
+  //****get info Google
+  const User = JSON.parse(localStorage.getItem("tokenGoogle")) || {};
+  const { email, name, imageUrl } = User.profileObj || {};
+
+ 
+
   const sideList = () => (
     <div className={classes.list} role="presentation">
-      <div className="wrap-account-item">
+      <div onClick={() => {clickLogOut()}} className="wrap-account-item">
         <div className="wrap-account">
-          <div className="wrap-img-acc" />
+          <div
+            className="wrap-img-acc"
+            style={{ backgroundImage: `url(${imageUrl})` }}
+          />
           <div className="wrap-info">
-            <h3 className="name-info">Quang</h3>
-            <p className="email-info">quangtran.dev24h@gmail.com</p>
+            <h3 className="name-info">{name}</h3>
+            <p className="email-info">{email}</p>
           </div>
         </div>
       </div>
@@ -62,7 +81,7 @@ const MenuDrawer = props => {
         <List className="pad-ver-0">
           <ListItem className="item-active item-other">
             <ListItemText className="text-item-drawer">
-              T2 List
+              ABC List
               <ListItemText className="text-item-drawer">11 item</ListItemText>
             </ListItemText>
             <ListItemIcon className="btn-icon-item">
@@ -96,11 +115,10 @@ const MenuDrawer = props => {
         </ul>
         <div className="wrap-title-list link-footer">
           <span>
-            <a href>privacy . </a>
+            <a> privacy . </a>
           </span>
           <span>
-            {" "}
-            <a href>term</a>{" "}
+            <a>term</a>
           </span>
         </div>
       </div>
@@ -108,11 +126,11 @@ const MenuDrawer = props => {
   );
 
   return (
-    <div>
+    <>
       <Drawer open={props.left} onClose={() => props.toggleDrawer(false)}>
         {sideList()}
       </Drawer>
-    </div>
+    </>
   );
 };
 
