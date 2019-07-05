@@ -1,10 +1,11 @@
 import React, { useState, Fragment } from "react";
 import MaterialIcon from "material-icons-react";
 import DialogOrder from "../dialog-order/DialogOrder";
+import { connect } from 'react-redux';
+import * as actionTypes from '../../../store/action';
 
 const ListItems = props => {
-  const { listItem } = props;
-  
+console.log(props.listItem);
 
   const handleCloseDialog = () => {
     setPropsDialog({
@@ -16,19 +17,20 @@ const ListItems = props => {
   const [propsDialog, setPropsDialog ]= useState({
     isOpenDialog: false,
     handleCloseDialog,
-    listItem,
-    index: -1,
-    onChangeInfoItem: props.onChangeInfoItem
+    onChangeInfoItem: props.onChangeInfoItem,
+    ITEM_ID: null
   });
 
-  const handleClickOpenDialog = (index) => {
+  const handleClickOpenDialog = (item) => {
     setPropsDialog({
       ...propsDialog,
       isOpenDialog: true,
-      index
+      ITEM_ID: item.ITEM_ID
     })
-
+    console.log(item); 
   };
+
+  const listItem = props.listItem.filter(e => e.IS_CHECKED === 0);
   return (
     <Fragment>
       <ul className="list-item">
@@ -39,19 +41,19 @@ const ListItems = props => {
             className="wrap-img">
               <div
                 className="img"
-                style={{ backgroundImage: `url(${item.picture[0]})` }}
+                style={{ backgroundImage: `url(${item.ITEM_PICTURE})` }}
               />
             </div>
-            <div className="wrap-name-item" onClick={() => handleClickOpenDialog(index)}>
-              <span className="name-item">{item.name}</span>
+            <div className="wrap-name-item" onClick={() => handleClickOpenDialog(item)}>
+              <span className="name-item">{item.ITEM_NAME}</span>
               <div className="info-item">
-                {item.quantity !== 1 ? (
-                  <span className="quantity-item">Qty {item.quantity}</span>
+                {item.ITEM_QUANTITY !== 1 ? (
+                  <span className="quantity-item">Qty {item.ITEM_QUANTITY}</span>
                 ) : (
                   ""
                 )}
-                {item.note ? (
-                  <span className="note-item">{item.note}</span>
+                {item.ITEM_NOTE ? (
+                  <span className="note-item">{item.ITEM_NOTE}</span>
                 ) : (
                   ""
                 )}
@@ -61,7 +63,8 @@ const ListItems = props => {
               <div
                 className="btn"
                 onClick={() => {
-                  props.addItemCheckOut(item);
+                 console.log("click", item.IS_CHECKED);
+                 props.toggleState(item)
                 }}
               >
                 <div className="btn-icon">
@@ -82,8 +85,15 @@ const ListItems = props => {
           </li>
         ))}
       </ul>
-      { propsDialog.index !== -1 ? <DialogOrder {...propsDialog} /> : "" }
+      { propsDialog.ITEM_ID ? <DialogOrder {...propsDialog} /> : "" }
       </Fragment>
   );
 };
-export default ListItems;
+
+const mapStateToProps = state => {
+  return {
+    listItem: state.list.listItem,
+  };
+}
+
+export default connect(mapStateToProps)(ListItems);

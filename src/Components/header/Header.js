@@ -10,6 +10,8 @@ import Divider from "@material-ui/core/Divider";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import Check from "@material-ui/icons/Check";
 import MenuDrawer from "./menu-drawer/MenuDrawer";
+import { connect } from "react-redux";
+import * as actionTypes from "../../store/action";
 
 export default class Header extends React.Component {
   constructor(props) {
@@ -18,8 +20,9 @@ export default class Header extends React.Component {
       isOpenSort: false,
       left: false
     };
+    console.log(this.props.isSort);
   }
-  
+
   componentWillMount() {
     document.addEventListener("mousedown", this.handleClick, false);
   }
@@ -30,8 +33,12 @@ export default class Header extends React.Component {
 
   handleClick = e => {
     const { notBtnSort } = this.refs;
-    
-    if (this.node && this.node.contains(e.target) && !notBtnSort.contains(e.target)) {
+
+    if (
+      this.node &&
+      this.node.contains(e.target) &&
+      !notBtnSort.contains(e.target)
+    ) {
       return;
     }
     this.setIsOpenSort(false);
@@ -59,8 +66,6 @@ export default class Header extends React.Component {
     const props = {
       left,
       toggleDrawer: this.toggleDrawer,
-      setIsOpenSort: this.setIsOpenSort,
-      dataUser: this.props.dataUser
     };
     return (
       <div>
@@ -84,7 +89,7 @@ export default class Header extends React.Component {
                 ref={node => (this.node = node)}
                 className="container-btn-right"
               >
-                {isOpenSort ? <CardOptions {...this.props} {...props} /> : ""}
+                {isOpenSort ? <CardOptionsForm /> : ""}
                 <div className="wrap-btn-right">
                   <div
                     className="btn right-btn"
@@ -96,13 +101,9 @@ export default class Header extends React.Component {
                       <MaterialIcon icon="sort" />
                     </div>
                   </div>
-                  <div className="btn right-btn"
-                    ref='notBtnSort'
-                  >
-                    <div className="btn-icon"
-                    >
-                      <MaterialIcon icon="person_add" 
-                      />
+                  <div className="btn right-btn" ref="notBtnSort">
+                    <div className="btn-icon">
+                      <MaterialIcon icon="person_add" />
                     </div>
                   </div>
                 </div>
@@ -110,7 +111,7 @@ export default class Header extends React.Component {
             </div>
           </div>
         </div>
-        <MenuDrawer {...props} {...this.props}/>
+        <MenuDrawer {...props} {...this.props} />
       </div>
     );
   }
@@ -128,63 +129,41 @@ const useStyles = {
 };
 
 class CardOptions extends React.Component {
-  constructor(props) {
-    super(props);
-    const getIsSort = JSON.parse(localStorage.getItem("isSort"));
-    this.state = {
-      isSort: getIsSort || { isOrder: true, isCategory: false, isAlpha: false },
-      classes: useStyles
-    };
-  }
+  state = {
+    classes: useStyles
+  };
 
   setSortOrder = event => {
     event.preventDefault();
-    this.setState(
-      {
-        isSort: {
-          isOrder: true,
-          isCategory: false,
-          isAlpha: false
-        }
-      },
-      () => {
-        this.props.callBack(this.state.isSort);
-      }
-    );
+    this.props.onChangeStateSort({
+      isOrder: true,
+      isCategory: false,
+      isAlpha: false
+    });
   };
 
   setSortCategory = event => {
     event.preventDefault();
-    this.setState(
-      {
-        isSort: {
-          isOrder: false,
-          isCategory: true,
-          isAlpha: false
-        }
-      },
-      () => this.props.callBack(this.state.isSort)
-    );
+    this.props.onChangeStateSort({
+      isOrder: false,
+      isCategory: true,
+      isAlpha: false
+    });
   };
 
   setSortAlpha = event => {
     event.preventDefault();
-    this.setState(
-      {
-        isSort: {
-          isOrder: false,
-          isCategory: false,
-          isAlpha: true
-        }
-      },
-      () => this.props.callBack(this.state.isSort)
-    );
+    this.props.onChangeStateSort({
+      isOrder: false,
+      isCategory: false,
+      isAlpha: true
+    });
   };
 
   render() {
-    const { isSort } = this.state;
-    const { isOrder, isCategory, isAlpha } = isSort;
-    localStorage.setItem("isSort", JSON.stringify(isSort));
+    console.log("Card: ", this.props);
+    const { isOrder, isCategory, isAlpha } = this.props.isSort;
+    localStorage.setItem("isSort", JSON.stringify(this.props.isSort));
     const classes = this.state;
     return (
       <List component="nav" className="card-option card-category">
@@ -237,3 +216,16 @@ class CardOptions extends React.Component {
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {isSort: state.sort.stateSort}
+}
+
+const mapDispatchToProps = dispatch => {
+  return { 
+    onChangeStateSort: (stateSort) => dispatch({type: actionTypes.CHANGE_STATE_SORT, stateSort: stateSort })
+   } 
+}
+
+const CardOptionsForm =  connect(mapStateToProps, mapDispatchToProps)(CardOptions);
+

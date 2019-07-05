@@ -22,6 +22,7 @@ import {
   VisibilityOff,
   ErrorOutlineOutlined
 } from "@material-ui/icons";
+import { checkAccount } from '../../API/login';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -95,8 +96,10 @@ const LoginForm = props => {
       txtPassword: ""
     },
     isPassword: true,
-    isLoading: true
+    isLoading: false,
+    isLogin: false
   });
+
   const { FB } = window;
 
   const validateUser = () => {
@@ -173,41 +176,38 @@ const LoginForm = props => {
       isPassword: !isPassword
     });
   };
-  const onCheckAccountValid = () => {
-    const acc = JSON.parse(localStorage.getItem("account"));
+  const onSubmit = async () => {
     const { txtUsername, txtPassword } = state;
-    if (acc.txtUsername === txtUsername && acc.txtPassword === txtPassword)
-      return true;
-    else return false;
-  };
-  const onSubmit = () => {
-    if (validateForm() && onCheckAccountValid()) {
+    const res = await checkAccount(txtUsername, txtPassword);
+    const isExistAccount = res.data.length;
+    if (validateForm() && isExistAccount) {
+      localStorage.setItem('USER_ID', res.data[0].USER_ID);
       props.history.push("/list");
       return;
     }
     return;
   };
-  const autoCheck = setInterval(() => checkSignedInGoogle(), 1000);
+  // const autoCheck = setInterval(() => checkStatusLoginFacebook(), 100);
 
-  //Login with Facebook
-  const checkStatusLoginFacebook = () => {
-    FB.getLoginStatus(response => {
-      console.log(response);
-      if (response.status === "connected") {
-        const newToken = response.authResponse.accessToken;
-        localStorage.setItem("token", newToken);
-        setState({
-          ...state,
-          isLoading: false
-        });
-        // clearInterval(autoCheck);
-        props.history.push("/list");
-      }
-    });
-  };
-  const loginWithFacebook = () => {
-    FB.login();
-  };
+  // // //Login with Facebook
+  // const checkStatusLoginFacebook = () => {
+  //   FB.getLoginStatus(response => {
+  //     console.log(response);
+  //     if (response.status === "connected") {
+  //       const newToken = response.authResponse.accessToken;
+  //       localStorage.setItem("token", newToken);
+  //       setState({
+  //         ...state,
+  //         isLoading: false
+  //       });
+  //       clearInterval(autoCheck);
+  //       props.history.push("/list");
+  //     }
+  //   });
+  // };
+  // const loginWithFacebook = () => {
+  //   FB.login();
+  // };
 
   // Login with Google
   const responseGoogle = response => {
@@ -224,10 +224,9 @@ const LoginForm = props => {
     if (infoGG) {
       const token = infoGG.token;
       if (token) {
-        clearInterval(autoCheck);
         props.history.push("/list");
       }
-      clearInterval(autoCheck);
+      // clearInterval(autoCheck);
     }
     setState({ ...state, isLoading: false });
     return;
@@ -340,7 +339,7 @@ const LoginForm = props => {
               <Tooltip title="Facebook" className={classes.m_5}>
                 <Fab
                   color="secondary"
-                  onClick={loginWithFacebook}
+                  // onClick={loginWithFacebook}
                   className={`${classes.blue}`}
                 >
                   <i

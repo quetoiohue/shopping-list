@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import MaterialIcon from "material-icons-react";
 import DialogOrder from "../dialog-order/DialogOrder";
+import { connect } from 'react-redux';
+import * as actionTypes from '../../../store/action';
 
 const OrderCategoryList = props => {
-  const { listItem } = props;
   const [listCategory] = useState([
     { idCate: 1, nameCate: "Beverages" },
     { idCate: 2, nameCate: "Dairy & Eggs" },
@@ -23,7 +24,6 @@ const OrderCategoryList = props => {
   const [propsDialog, setPropsDialog ]= useState({
     isOpenDialog: false,
     handleCloseDialog,
-    listItem,
     index: -1,
     onChangeInfoItem: props.onChangeInfoItem
   });
@@ -31,10 +31,10 @@ const OrderCategoryList = props => {
   const handleClickOpenDialog = (item) => {
     setPropsDialog({
       ...propsDialog,
+      index: props.listItem.find( e => e === item),
       isOpenDialog: true,
-      index: listItem.findIndex(e => e === item)
     })
-
+    debugger
   };
 
   return (
@@ -42,7 +42,7 @@ const OrderCategoryList = props => {
       <ul className="list-item">
         {listCategory.map((itemCate, index) => (
           <div className="item-cate" key={index.toString()}>
-            {listItem.filter(e => e.idCate === itemCate.idCate).length > 0 ? (
+            {props.listItem.filter(e => e.idCate === itemCate.idCate).length > 0 ? (
               <span className="item-active title-cate">
                 {itemCate.nameCate}
               </span>
@@ -51,7 +51,7 @@ const OrderCategoryList = props => {
             )}
 
             <ul className="list-item">
-              {listItem
+              {props.listItem
                 .filter(e => e.idCate === itemCate.idCate)
                 .map((item, index) => (
                   <li className="item-active" key={index.toString()}>
@@ -85,7 +85,7 @@ const OrderCategoryList = props => {
                       <div
                         className="btn"
                         onClick={() => {
-                          props.addItemCheckOut(item);
+                          props.addItemCheckOff(item);
                         }}
                       >
                         <div className="btn-icon">
@@ -113,4 +113,16 @@ const OrderCategoryList = props => {
     </>
   );
 };
-export default OrderCategoryList;
+
+const mapStateToProps = state => {
+  return {
+    listItem: state.list.listItem,
+  };
+}
+
+const mapDispatchToProps = dispatch => {
+  return {
+   
+  }
+}
+export default connect(mapStateToProps, mapDispatchToProps)(OrderCategoryList);

@@ -12,9 +12,10 @@ import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
 import MoreVert from "@material-ui/icons/MoreVert";
 import Divider from "@material-ui/core/Divider";
+import { connect } from "react-redux";
+import * as actionTypes from "../../../store/action";
 
 const ListCheckedOff = props => {
-  const { listItemCheckOff } = props;
   const [open, setOpen] = React.useState(true);
   const [openOption, setopenOption] = useState(false);
 
@@ -25,7 +26,7 @@ const ListCheckedOff = props => {
     } else return;
   };
 
-  function handleClick(event) {
+  const handleClick = (event) => {
     event.preventDefault();
     if (event.currentTarget.getAttribute("name") === "openMore") {
       setOpen(!open);
@@ -33,70 +34,74 @@ const ListCheckedOff = props => {
       return;
     }
   }
+
+  const { listItemCheckOff } = props;
   return (
     <>
-    <List>
-      <div className="wrap-title-checkoff">
-        <ListItem
-          button
-          onClick={event => handleClick(event)}
-          className="item-title"
-          name="openMore"
-        >
-          {open ? (
-            <ExpandLess className="wrap-img" />
-          ) : (
-            <ExpandMore className="wrap-img" />
-          )}
-          <ListItemText className="name-item">
-            {`${listItemCheckOff.length} checked off`}
-          </ListItemText>
-        </ListItem>
-        <ListItemIcon
-          className="btn-item-right"
-          onClick={event => triggerOptionButton(event)}
-          name="optionBtn"
-        >
-          <MoreVert className="icon-hover" />
-        </ListItemIcon>
-      </div>
-      {openOption ? <CardOption {...props} /> : ""}
-      <Collapse in={open} timeout="auto" unmountOnExit>
-        <ul className="list-item list-checkoff">
-          {listItemCheckOff.map((item, index) => (
-            <li className="item-active" key={index.toString()}>
-              <div className="wrap-img">
-                <div
-                  className="img"
-                  style={{ backgroundImage: `url(${item.picture[0]})` }}
-                />
-              </div>
-              <div className="wrap-name-item">
-                <span className="name-item name-checkoff">{item.name}</span>
-              </div>
-              <div className="wrap-btn-item">
-                <div
-                  className="btn"
-                  onClick={() => props.addCheckOffToItem(index)}
-                >
-                  <div className="btn-icon">
-                    <MaterialIcon icon="add" />
+      <List>
+        <div className="wrap-title-checkoff">
+          <ListItem
+            button
+            onClick={event => handleClick(event)}
+            className="item-title"
+            name="openMore"
+          >
+            {open ? (
+              <ExpandLess className="wrap-img" />
+            ) : (
+              <ExpandMore className="wrap-img" />
+            )}
+            <ListItemText className="name-item">
+              {`${listItemCheckOff.length} checked off`}
+            </ListItemText>
+          </ListItem>
+          <ListItemIcon
+            className="btn-item-right"
+            onClick={event => triggerOptionButton(event)}
+            name="optionBtn"
+          >
+            <MoreVert className="icon-hover" />
+          </ListItemIcon>
+        </div>
+        {openOption ? <CardOption {...props} /> : ""}
+        <Collapse in={open} timeout="auto" unmountOnExit>
+          <ul className="list-item list-checkoff">
+            {listItemCheckOff.map((item, index) => (
+              <li className="item-active" key={index.toString()}>
+                <div className="wrap-img">
+                  <div
+                    className="img"
+                    style={{ backgroundImage: `url(${item.ITEM_PICTURE})` }}
+                  />
+                </div>
+                <div className="wrap-name-item">
+                  <span className="name-item name-checkoff">{item.ITEM_NAME}</span>
+                </div>
+                <div className="wrap-btn-item">
+                  <div
+                    className="btn"
+                    onClick={() => props.toggleState(item)}
+                  >
+                    <div className="btn-icon">
+                      <MaterialIcon icon="add" />
+                    </div>
+                  </div>
+                  <div
+                    className="btn"
+                    onClick={() => {
+                      props.deleteItem(item);
+                    }}
+                  >
+                    <div className="btn-icon">
+                      <MaterialIcon icon="delete" />
+                    </div>
                   </div>
                 </div>
-                <div
-                  className="btn"
-                  onClick={() => props.deleteItemCheckOff(index)}
-                >
-                  <div className="btn-icon">
-                    <MaterialIcon icon="delete" />
-                  </div>
-                </div>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </Collapse>
-    </List>
+              </li>
+            ))}
+          </ul>
+        </Collapse>
+      </List>
     </>
   );
 };
@@ -130,7 +135,7 @@ const CardOption = props => {
       <ListItem
         button
         className={classes.nameOption}
-        onClick={props.addAllCheckOffToItem}
+        onClick={props.uncheckedAllItem}
       >
         <ListItemText>Unchecked all item</ListItemText>
       </ListItem>
@@ -145,4 +150,18 @@ const CardOption = props => {
     </List>
   );
 };
-export default ListCheckedOff;
+const mapStateToProps = state => {
+  return {
+    listItem: state.list.listItem,
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    
+  };
+};
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ListCheckedOff);

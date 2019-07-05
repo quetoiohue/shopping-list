@@ -7,15 +7,14 @@ import ListItems from "./list-item/ListItems";
 import OrderCategoryList from "./order-category-list/OrderCategoryList";
 import OrderAlphaList from "./order-alpha-list/OrderAlphaList";
 import RecommenList from "./recommend-list/RecommendList";
+import { connect } from "react-redux";
+import * as actionTypes from "../../store/action";
+import * as fetch from "../../API/Product";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
-const getListItem = JSON.parse(localStorage.getItem("listItem"));
-const getListItemCheckOff = JSON.parse(
-  localStorage.getItem("listItemCheckOff")
-);
 
-export default class ListItemShopping extends React.Component {
+class ListItemShopping extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
@@ -23,17 +22,21 @@ export default class ListItemShopping extends React.Component {
       textInput: "",
       openRecommend: false,
       isSelectAll: false,
-      listProduct: data.listProduct,
-      listItem: getListItem || [],
-      listItemCheckOff: getListItemCheckOff || []
+      listProduct: data.listProduct
     };
   }
-  triggerSelectAll = open => {
-    this.setState({
-      isSelectAll: open
+
+  componentDidMount() {
+    this.props.onFetchBegin();
+    fetch.products().then(res => {
+      this.setState({ listProduct: res.data });
+      console.log(this.state.listProduct);
     });
-    console.log(this.state.isSelectAll);
-  };
+    const USER_ID = JSON.parse(localStorage.getItem("USER_ID"));
+    fetch.getItems(USER_ID).catch(err => this.props.onFetchFailure(err));
+    console.log("product", this.props.listItem);
+  }
+  triggerSelectAll = open => {};
   onChangeInput = event => {
     this.setState({
       textInput: event.target.value
@@ -64,100 +67,69 @@ export default class ListItemShopping extends React.Component {
     }
   };
   addItem = item => {
-    const { listItem } = this.state;
-    let newItem = {
-      name: item.name,
-      picture: item.picture,
-      idCate: item.idCate,
-      quantity: 1,
-      note: ""
-    };
-    listItem.unshift(newItem);
-    this.setState({
-      listItem
-    });
+    const { PRODUCT_NAME, PRODUCT_PICTURE, PRODUCT_NOTE, CATEGORY_ID } = item;
+    console.log(PRODUCT_NAME);
+    fetch.createItem(
+      1,
+      PRODUCT_NAME,
+      PRODUCT_PICTURE,
+      PRODUCT_NOTE,
+      CATEGORY_ID
+    );
   };
 
   addItemByInput = event => {
-    const { listItem, listProduct } = this.state;
+    const { listProduct } = this.state;
     if (event.key === "Enter") {
       const { textInput } = this.state;
       if (textInput) {
-        const getItem = listProduct.find(item =>
-         item.name.toUpperCase() === textInput.toUpperCase()
+        const getItem = listProduct.find(
+          item => item.PRODUCT_NAME.toUpperCase() === textInput.toUpperCase()
         );
-        let newItem = {
-          name: getItem.name,
-          picture: getItem.picture,
-          idCate: getItem.idCate,
-          quantity: 1,
-          note: ""
-        };
-        listItem.unshift(
-          getItem
-            ? newItem
-            : {
-                name: textInput,
-                picture: ["http://chittagongit.com/download/117414"],
-                idCate: 6,
-                quantity: 1,
-                note: ""
-              }
-        );
+        const {
+          PRODUCT_NAME,
+          PRODUCT_PICTURE,
+          PRODUCT_NOTE,
+          CATEGORY_ID
+        } = getItem;
+        if (getItem) {
+          fetch.createItem(
+            1,
+            PRODUCT_NAME,
+            PRODUCT_PICTURE,
+            PRODUCT_NOTE,
+            CATEGORY_ID
+          );
+        } else {
+          fetch.createItem(
+            1,
+            textInput,
+            "http://chittagongit.com/download/117414",
+            "",
+            7
+          );
+        }
       }
-      this.setState({
-        listItem
-      });
     }
   };
 
   deleteItem = item => {
-    const { listItem } = this.state;
-    listItem.splice(listItem.findIndex(e => e === item), 1);
-    this.setState({
-      listItem
-    });
+    console.log(item);
+    fetch.deleteItem(item.ITEM_ID);
   };
 
-  addItemCheckOut = item => {
-    const { listItem, listItemCheckOff } = this.state;
-    listItemCheckOff.unshift(item);
-    listItem.splice(listItem.findIndex(e => e === item), 1);
-    this.setState({
-      listItem,
-      listItemCheckOff
-    });
+  toggleState = item => {
+    const { ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED } = item;
+    console.log(ITEM_NAME);
+    fetch.updateItem(ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, 1 - IS_CHECKED);
   };
 
-  addCheckOffToItem = index => {
-    const { listItem, listItemCheckOff } = this.state;
-    listItem.unshift(listItemCheckOff[index]);
-    listItemCheckOff.splice(index, 1);
-    this.setState({
-      listItem,
-      listItemCheckOff
-    });
+  uncheckedAllItem = () => {
+    fetch.setStateAllOfItem(false);
   };
 
-  deleteItemCheckOff = index => {
-    const { listItemCheckOff } = this.state;
-    listItemCheckOff.splice(index, 1);
-    this.setState({
-      listItemCheckOff
-    });
-  };
-  addAllCheckOffToItem = () => {
-    const { listItemCheckOff, listItem } = this.state;
-    const listItems = listItem.concat(listItemCheckOff);
-    this.setState({
-      listItem: listItems,
-      listItemCheckOff: []
-    });
-  };
   deleteAllItemCheckOff = () => {
-    this.setState({
-      listItemCheckOff: []
-    });
+    fetch.deleteFollowState(true);
   };
 
   openRecommend = open => {
@@ -177,7 +149,7 @@ export default class ListItemShopping extends React.Component {
   handleClicks = event => {
     const node = this.node;
     console.log(node);
-    
+
     const { inputAdd } = this.refs;
     if (node) {
       if (node.contains(event.target) || inputAdd.contains(event.target)) {
@@ -188,14 +160,21 @@ export default class ListItemShopping extends React.Component {
     this.openRecommend(false);
   };
 
-  onChangeInfoItem = (index, name, quantity, note) => {
-    const { listItem } = this.state;
-    listItem[index].name = name;
-    listItem[index].quantity = quantity;
-    listItem[index].note = note;
-    this.setState({
-      listItem
-    });
+  onChangeInfoItem = (item) => {
+    const {
+      ITEM_ID,
+      ITEM_NAME,
+      ITEM_QUANTITY,
+      ITEM_NOTE,
+      IS_CHECKED
+    } = item;
+    fetch.updateItem(
+      ITEM_ID,
+      ITEM_NAME,
+      ITEM_QUANTITY,
+      ITEM_NOTE,
+      IS_CHECKED
+      );
   };
   render() {
     const styles = {
@@ -204,36 +183,29 @@ export default class ListItemShopping extends React.Component {
         transition: "all 1s"
       }
     };
+
     const { slidesStyle } = styles;
-    const {
-      listProduct,
-      listItem,
-      listItemCheckOff,
-      textInput,
-      openRecommend,
-      isSelectAll
-    } = this.state;
-    const { stateSort } = this.props;
+    const { listProduct, textInput, openRecommend, isSelectAll } = this.state;
+    const { isSort, listItem, isLoading } = this.props;
+    console.log(listItem);
+    const listItemCheckOff = listItem.filter(e => e.IS_CHECKED === 1);
     const props = {
       textInput,
-      stateSort,
+      listProduct,
       listItem,
       listItemCheckOff,
-      listProduct,
       addItem: this.addItem,
-      addItemCheckOut: this.addItemCheckOut,
       deleteItem: this.deleteItem,
-      addCheckOffToItem: this.addCheckOffToItem,
-      deleteItemCheckOff: this.deleteItemCheckOff,
-      addAllCheckOffToItem: this.addAllCheckOffToItem,
+      toggleState: this.toggleState,
+      uncheckedAllItem: this.uncheckedAllItem,
       deleteAllItemCheckOff: this.deleteAllItemCheckOff,
       onChangeInfoItem: this.onChangeInfoItem,
       triggerSelectAll: this.triggerSelectAll
     };
 
-    localStorage.setItem("listItem", JSON.stringify(listItem));
-    localStorage.setItem("listItemCheckOff", JSON.stringify(listItemCheckOff));
-    return (
+    return isLoading ? (
+      "Loading..."
+    ) : (
       <div className="list-page">
         <div className="shopping-list">
           <div className="top-bar">
@@ -290,12 +262,14 @@ export default class ListItemShopping extends React.Component {
                             <div
                               className="slide-img"
                               style={{
-                                backgroundImage: `url(${item.picture[0]})`
+                                backgroundImage: `url(${item.PRODUCT_PICTURE})`
                               }}
                             />
                           </div>
                           <div className="wrap-slide-name">
-                            <span className="slide-name">{item.name}</span>
+                            <span className="slide-name">
+                              {item.PRODUCT_NAME}
+                            </span>
                           </div>
                         </div>
                       ))}
@@ -322,16 +296,36 @@ export default class ListItemShopping extends React.Component {
           <div ref={node => (this.node = node)}>
             {openRecommend === true ? <RecommenList {...props} /> : ""}
           </div>
-          {stateSort.isOrder === true ? <ListItems {...props} /> : ""}
-          {stateSort.isCategory === true ? (
-            <OrderCategoryList {...props} />
-          ) : (
-            ""
-          )}
-          {stateSort.isAlpha === true ? <OrderAlphaList {...props} /> : ""}
+          {isSort.isOrder === true ? <ListItems {...props} /> : ""}
+          {isSort.isCategory === true ? <OrderCategoryList {...props} /> : ""}
+          {isSort.isAlpha === true ? <OrderAlphaList {...props} /> : ""}
           {listItemCheckOff.length ? <ListCheckedOff {...props} /> : ""}
         </div>
       </div>
     );
   }
 }
+
+const mapStateToProps = state => {
+  return {
+    isSort: state.sort.stateSort,
+    listItem: state.list.listItem,
+    isLoading: state.list.isLoading
+  };
+};
+
+const mapDispatchToProps = dispatch => {
+  return {
+    onFetchBegin: () => dispatch({ type: actionTypes.FETCH_ITEMS_BEGIN }),
+    onFetchSucces: items =>
+      dispatch({ type: actionTypes.FETCH_ITEMS_SUCCESS, listItem: items }),
+    onFetchFailure: err =>
+      dispatch({ type: actionTypes.FETCH_ITEMS_FAILURE, error: err }),
+    fetchToDos: () => dispatch({ type: actionTypes.FETCH_TODOS })
+  };
+};
+
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ListItemShopping);

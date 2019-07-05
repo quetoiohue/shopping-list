@@ -2,23 +2,22 @@ import React, { useState } from "react";
 import MaterialIcon from "material-icons-react";
 import Dialog from "@material-ui/core/Dialog";
 import "./DialogOrder.css";
+import * as actionTypes from '../../../store/action';
+import { connect } from 'react-redux';
 
 const DialogOrder = props => {
   const {
     isOpenDialog,
-    listItem,
-    index,
+    ITEM_ID,
     handleCloseDialog,
-    onChangeInfoItem
   } = props;
   const handleClose = () => {
-    const { name, quantity, note } = newItem;
-    onChangeInfoItem(index, name, quantity, note);
+    props.onChangeInfoItem(newItem);
     handleCloseDialog();
   };
 
   const [state, setState] = useState({
-    newItem: listItem[index],
+    newItem: props.listItem.find(e => e.ITEM_ID === ITEM_ID),
     isSaving: false
   });
 
@@ -32,17 +31,17 @@ const DialogOrder = props => {
     });
   };
 
-  const onChangQuatity = number => {
+  const onChangQuantity = number => {
     setState({
       ...state,
       newItem: {
         ...newItem,
-        quantity: quantity + number
+        ITEM_QUANTITY: newItem.ITEM_QUANTITY + number
       }
     });
   };
   const { isSaving, newItem } = state;
-  const { name, picture, quantity, note } = newItem;
+  const { ITEM_NAME, ITEM_PICTURE, ITEM_QUANTITY, ITEM_NOTE } = newItem;
   return (
     <>
       <Dialog
@@ -64,15 +63,15 @@ const DialogOrder = props => {
           <div className="image-container flex-center">
             <div
               className="image-main"
-              style={{ backgroundImage: `url(${picture[0]})` }}
+              style={{ backgroundImage: `url(${ITEM_PICTURE})` }}
             />
           </div>
           <input
             className="input-change-name"
             type="text"
-            value={name}
+            value={ITEM_NAME}
             onChange={onChangeInput}
-            name="name"
+            name="ITEM_NAME"
           />
           <div className="state-label">
             <span className="text-state">On your list</span>
@@ -83,18 +82,18 @@ const DialogOrder = props => {
             <div className="quantity-button">
               <div
                 className="btn-icon flex-center"
-                onClick={() => onChangQuatity(-1)}
+                onClick={() => onChangQuantity(-1)}
               >
                 <MaterialIcon icon="remove_circle_outline" />
               </div>
               <div className="label-container">
                 <span className="quantity-text">Qty</span>
                 &nbsp;
-                <span className="quantity">{quantity}</span>
+                <span className="quantity">{ITEM_QUANTITY}</span>
               </div>
               <div
                 className="btn-icon flex-center"
-                onClick={() => onChangQuatity(1)}
+                onClick={() => onChangQuantity(1)}
               >
                 <MaterialIcon icon="add_circle_outline" />
               </div>
@@ -104,9 +103,9 @@ const DialogOrder = props => {
         <div className="content-note">
           <textarea
             className="text-note"
-            value={note}
+            value={ITEM_NOTE}
             onChange={onChangeInput}
-            name="note"
+            name="ITEM_NOTE"
           />
         </div>
         <div className="footer-dialog" />
@@ -115,4 +114,10 @@ const DialogOrder = props => {
   );
 };
 
-export default DialogOrder;
+const mapStateToProps = state => {
+  return {
+    listItem: state.list.listItem,
+  }
+}
+
+export default connect(mapStateToProps, null)(DialogOrder);

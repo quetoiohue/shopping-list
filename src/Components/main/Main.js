@@ -5,21 +5,17 @@ import { Link } from "react-router-dom";
 import "typeface-roboto";
 import "../../App.css";
 import { accessToken } from "../../API/login";
+import { connect } from "react-redux";
+import * as actionTypes from '../../store/action';
 
 class Main extends React.Component {
   constructor(props) {
-    const getAccount = JSON.parse(localStorage.getItem("account"));
     super(props);
     this.state = {
-      stateSort: getAccount.isSort || { isAlpha: false, isCategory: false, isOrder: true },
       isLoading: true,
     };
-    console.log(this.state.getAccount);
+    
   }
-  
-  callBack = stateSort => {
-    this.setState({ stateSort });
-  };
 
   componentDidMount() {
     const tokenGoogle = JSON.parse(localStorage.getItem("tokenGoogle"));
@@ -27,9 +23,9 @@ class Main extends React.Component {
 
     //*****Google
     console.log( tokenGoogle );
-    if( !tokenGoogle ) {
-        history.push('/');
-    }
+    // if( !tokenGoogle ) {
+    //     history.push('/');
+    // }
     this.setState({
       isLoading: false
     })
@@ -52,21 +48,26 @@ class Main extends React.Component {
   }
 
   render() {
-    const { stateSort, isLoading } = this.state;
-    const props = {
-      stateSort,
-      callBack: this.callBack
-    };
-    
+    const { isLoading } = this.state;
+    console.log("Main : ", this.props.isSort);
     return isLoading ? (
       <div className="App-header text-loading">Loading...</div>
     ) : (
       <Fragment>
-        <Header {...props} {...this.props}/>
-        <ListItemShopping {...props} />
+        <Header />
+        <ListItemShopping {...this.props}/>
       </Fragment>
     );
   }
 }
 
-export default Main;
+const mapStateToProps = state => {
+  return {isSort: state.sort.stateSort}
+}
+
+const mapDispatchToProps = dispatch => {
+  return { onChangeStateSort: (isSort) => dispatch({type: actionTypes.CHANGE_STATE_SORT, stateSort: isSort}) } 
+}
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(Main);
