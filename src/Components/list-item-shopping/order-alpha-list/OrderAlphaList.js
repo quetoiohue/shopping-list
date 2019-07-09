@@ -2,10 +2,10 @@ import React, { useState } from "react";
 import MaterialIcon from "material-icons-react";
 import DialogOrder from "../dialog-order/DialogOrder";
 import { connect } from "react-redux";
-import * as actionTypes from "../../../store/action";
+import Item from '../item/Item';
 
 const OrderAlphaList = props => {
-  const [listAlpha] = useState(["A", "B", "C"]);
+  const [listAlpha] = useState(["A", "B", "C", "D"]);
 
   const handleCloseDialog = () => {
     setPropsDialog({
@@ -17,7 +17,7 @@ const OrderAlphaList = props => {
   const [propsDialog, setPropsDialog] = useState({
     isOpenDialog: false,
     handleCloseDialog,
-    index: -1,
+    ITEM_ID: null,
     onChangeInfoItem: props.onChangeInfoItem
   });
 
@@ -25,93 +25,44 @@ const OrderAlphaList = props => {
     setPropsDialog({
       ...propsDialog,
       isOpenDialog: true,
-      index: props.listItem.findIndex(e => e === item)
+      ITEM_ID: item.ITEM_ID
     });
   };
-
+  const propsItem = {
+    ...props,
+    handleClickOpenDialog
+  }
   return (
     <>
       <ul className="list-item">
         {listAlpha.map((items, index) =>
           props.listItem
-            .filter(e => e.name.indexOf(items) === 0)
+            .filter(e => e.ITEM_NAME.toUpperCase().indexOf(items) === 0 && !e.IS_CHECKED)
             .sort((a, b) => {
-              let nameA = a.name.toUpperCase();
-              let nameB = b.name.toUpperCase();
+              let nameA = a.ITEM_NAME.toUpperCase();
+              let nameB = b.ITEM_NAME.toUpperCase();
               if (nameA < nameB) return -1;
               if (nameA > nameB) return 1;
               return 0;
             })
             .map((item, index) => (
-              <li className="item-active" key={index.toString()}>
-                <div className="wrap-img">
-                  <div
-                    className="img"
-                    style={{ backgroundImage: `url(${item.picture[0]})` }}
-                  />
-                </div>
-                <div
-                  className="wrap-name-item"
-                  onClick={() => handleClickOpenDialog(item)}
-                >
-                  <span className="name-item">{item.name}</span>
-                  <div className="info-item">
-                    {item.quantity !== 1 ? (
-                      <span className="quantity-item">Qty {item.quantity}</span>
-                    ) : (
-                      ""
-                    )}
-                    {item.note ? (
-                      <span className="note-item">{item.note}</span>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-
-                <div className="wrap-btn-item">
-                  <div
-                    className="btn"
-                    onClick={() => {
-                      props.addItemCheckOff(item);
-                    }}
-                  >
-                    <div className="btn-icon">
-                      <MaterialIcon icon="done" />
-                    </div>
-                  </div>
-                  <div
-                    className="btn"
-                    onClick={() => {
-                      props.deleteItem(item);
-                    }}
-                  >
-                    <div className="btn-icon">
-                      <MaterialIcon icon="delete" />
-                    </div>
-                  </div>
-                </div>
-              </li>
+              <Item item={item} {...propsItem} />
             ))
         )}
       </ul>
-      {propsDialog.index !== -1 ? <DialogOrder {...propsDialog} /> : ""}
+      {propsDialog.ITEM_ID ? <DialogOrder {...propsDialog} /> : ""}
     </>
   );
 };
 
 const mapStateToProps = state => {
-  console.log(state.list.listItem);
-  
   return {
     listItem: state.list.listItem
   };
 };
-  
+
 const mapDispatchToProps = dispatch => {
-  return {
-    
-  };
+  return {};
 };
 export default connect(
   mapStateToProps,

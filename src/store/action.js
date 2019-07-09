@@ -7,3 +7,11 @@ export const FETCH_ITEMS_SUCCESS = 'FETCH_ITEMS_SUCCESS';
 export const FETCH_ITEMS_FAILURE = 'FETCH_ITEMS_FAILURE';
 export const FETCH_TODOS = 'FETCH_TODOS';
 export const REFRESH_STATE = 'REFRESH_STATE';
+export const FETCH_LISTS_SUCCESS = 'FETCH_LISTS_SUCCESS';
+export const REFRESH_LISTS = 'REFRESH_LISTS';
+export const SHOW_LIST = 'SHOW_LIST';
+
+//action selected
+export const SET_COUNT = 'SET_COUNT';
+export const SET_SELECTED = 'SET_SELECTED';
+export const REFRESH_COUNT = 'REFRESH_COUNT';

@@ -12,17 +12,20 @@ import Check from "@material-ui/icons/Check";
 import MenuDrawer from "./menu-drawer/MenuDrawer";
 import { connect } from "react-redux";
 import * as actionTypes from "../../store/action";
+import HeaderSelected from './header-selected/HeaderSelected';
 
-export default class Header extends React.Component {
+class Header extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       isOpenSort: false,
-      left: false
+      left: false,
     };
-    console.log(this.props.isSort);
   }
 
+  componentDidMount() {
+    this.props.onFreshCount()
+  }
   componentWillMount() {
     document.addEventListener("mousedown", this.handleClick, false);
   }
@@ -65,10 +68,15 @@ export default class Header extends React.Component {
     const { isOpenSort, left } = this.state;
     const props = {
       left,
-      toggleDrawer: this.toggleDrawer,
+      toggleDrawer: this.toggleDrawer
     };
+    const { Lists, LIST_ID, count } = this.props;
+    const getNameList = Lists.find(e => e.LIST_ID === LIST_ID) || {};
+    const title = getNameList.LIST_NAME;
+
     return (
-      <div>
+       count > 0 ? <HeaderSelected {...this.props}/>  : 
+       <div>
         <div className="header">
           <div className="header-inner">
             <div className="btn left-btn">
@@ -83,7 +91,7 @@ export default class Header extends React.Component {
             </div>
             <div className="header-content">
               <h3 className="title-header">
-                <a className="logo-link">Shopping List</a>
+                <a className="logo-link">{title ? title : ""}</a>
               </h3>
               <div
                 ref={node => (this.node = node)}
@@ -113,6 +121,7 @@ export default class Header extends React.Component {
         </div>
         <MenuDrawer {...props} {...this.props} />
       </div>
+      
     );
   }
 }
@@ -161,7 +170,6 @@ class CardOptions extends React.Component {
   };
 
   render() {
-    console.log("Card: ", this.props);
     const { isOrder, isCategory, isAlpha } = this.props.isSort;
     localStorage.setItem("isSort", JSON.stringify(this.props.isSort));
     const classes = this.state;
@@ -218,14 +226,28 @@ class CardOptions extends React.Component {
 }
 
 const mapStateToProps = state => {
-  return {isSort: state.sort.stateSort}
-}
+  return {
+    isSort: state.sort.stateSort,
+    Lists: state.list.Lists,
+    LIST_ID: state.list.LIST_ID,
+    count: state.list.count
+  };
+};
 
 const mapDispatchToProps = dispatch => {
-  return { 
-    onChangeStateSort: (stateSort) => dispatch({type: actionTypes.CHANGE_STATE_SORT, stateSort: stateSort })
-   } 
-}
+  return {
+    onChangeStateSort: stateSort =>
+      dispatch({ type: actionTypes.CHANGE_STATE_SORT, stateSort: stateSort }),
+    onFetchListSuccess: () => dispatch({ type: actionTypes.REFRESH_LISTS }),
+    onFreshCount: () => dispatch({ type: actionTypes.REFRESH_COUNT})
+  };
+};
 
-const CardOptionsForm =  connect(mapStateToProps, mapDispatchToProps)(CardOptions);
-
+const CardOptionsForm = connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(CardOptions);
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Header);

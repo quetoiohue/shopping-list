@@ -10,6 +10,7 @@ import RecommenList from "./recommend-list/RecommendList";
 import { connect } from "react-redux";
 import * as actionTypes from "../../store/action";
 import * as fetch from "../../API/Product";
+import Loading from "../loading/Loading";
 
 const arrSlide = data.listProduct;
 const numberOfSlide = arrSlide.length / 3;
@@ -22,7 +23,7 @@ class ListItemShopping extends React.Component {
       textInput: "",
       openRecommend: false,
       isSelectAll: false,
-      listProduct: data.listProduct
+      listProduct: []
     };
   }
 
@@ -30,13 +31,11 @@ class ListItemShopping extends React.Component {
     this.props.onFetchBegin();
     fetch.products().then(res => {
       this.setState({ listProduct: res.data });
-      console.log(this.state.listProduct);
     });
-    const USER_ID = JSON.parse(localStorage.getItem("USER_ID"));
-    fetch.getItems(USER_ID).catch(err => this.props.onFetchFailure(err));
-    console.log("product", this.props.listItem);
+    this.props.onFreshState(this.props.LIST_ID);
+    this.props.onFreshCount();
   }
-  triggerSelectAll = open => {};
+
   onChangeInput = event => {
     this.setState({
       textInput: event.target.value
@@ -68,9 +67,9 @@ class ListItemShopping extends React.Component {
   };
   addItem = item => {
     const { PRODUCT_NAME, PRODUCT_PICTURE, PRODUCT_NOTE, CATEGORY_ID } = item;
-    console.log(PRODUCT_NAME);
+    const { LIST_ID } = this.props;
     fetch.createItem(
-      1,
+      LIST_ID,
       PRODUCT_NAME,
       PRODUCT_PICTURE,
       PRODUCT_NOTE,
@@ -80,21 +79,23 @@ class ListItemShopping extends React.Component {
 
   addItemByInput = event => {
     const { listProduct } = this.state;
+
     if (event.key === "Enter") {
       const { textInput } = this.state;
       if (textInput) {
         const getItem = listProduct.find(
           item => item.PRODUCT_NAME.toUpperCase() === textInput.toUpperCase()
         );
-        const {
-          PRODUCT_NAME,
-          PRODUCT_PICTURE,
-          PRODUCT_NOTE,
-          CATEGORY_ID
-        } = getItem;
+        const { LIST_ID } = this.props;
         if (getItem) {
+          const {
+            PRODUCT_NAME,
+            PRODUCT_PICTURE,
+            PRODUCT_NOTE,
+            CATEGORY_ID
+          } = getItem;
           fetch.createItem(
-            1,
+            LIST_ID,
             PRODUCT_NAME,
             PRODUCT_PICTURE,
             PRODUCT_NOTE,
@@ -102,7 +103,7 @@ class ListItemShopping extends React.Component {
           );
         } else {
           fetch.createItem(
-            1,
+            LIST_ID,
             textInput,
             "http://chittagongit.com/download/117414",
             "",
@@ -114,14 +115,18 @@ class ListItemShopping extends React.Component {
   };
 
   deleteItem = item => {
-    console.log(item);
     fetch.deleteItem(item.ITEM_ID);
   };
 
   toggleState = item => {
     const { ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED } = item;
-    console.log(ITEM_NAME);
-    fetch.updateItem(ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, 1 - IS_CHECKED);
+    fetch.updateItem(
+      ITEM_ID,
+      ITEM_NAME,
+      ITEM_QUANTITY,
+      ITEM_NOTE,
+      1 - IS_CHECKED
+    );
   };
 
   uncheckedAllItem = () => {
@@ -148,10 +153,9 @@ class ListItemShopping extends React.Component {
 
   handleClicks = event => {
     const node = this.node;
-    console.log(node);
 
     const { inputAdd } = this.refs;
-    if (node) {
+    if (node && inputAdd) {
       if (node.contains(event.target) || inputAdd.contains(event.target)) {
         return;
       }
@@ -160,21 +164,17 @@ class ListItemShopping extends React.Component {
     this.openRecommend(false);
   };
 
-  onChangeInfoItem = (item) => {
-    const {
-      ITEM_ID,
-      ITEM_NAME,
-      ITEM_QUANTITY,
-      ITEM_NOTE,
-      IS_CHECKED
-    } = item;
-    fetch.updateItem(
-      ITEM_ID,
-      ITEM_NAME,
-      ITEM_QUANTITY,
-      ITEM_NOTE,
-      IS_CHECKED
-      );
+  onChangeInfoItem = item => {
+    const { ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED } = item;
+    fetch.updateItem(ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED);
+  };
+
+  onSelectAll = () => {
+    fetch.setSelectedAllItem(true, false);
+  };
+
+  unSelectAll = () => {
+    fetch.setSelectedAllItem(false, false);
   };
   render() {
     const styles = {
@@ -186,8 +186,7 @@ class ListItemShopping extends React.Component {
 
     const { slidesStyle } = styles;
     const { listProduct, textInput, openRecommend, isSelectAll } = this.state;
-    const { isSort, listItem, isLoading } = this.props;
-    console.log(listItem);
+    const { isSort, listItem, isLoading, count } = this.props;
     const listItemCheckOff = listItem.filter(e => e.IS_CHECKED === 1);
     const props = {
       textInput,
@@ -202,17 +201,30 @@ class ListItemShopping extends React.Component {
       onChangeInfoItem: this.onChangeInfoItem,
       triggerSelectAll: this.triggerSelectAll
     };
-
+    const isUnSelect =
+      count < listItem.length - listItemCheckOff.length ? false : true;
     return isLoading ? (
-      "Loading..."
+      <Loading />
     ) : (
       <div className="list-page">
         <div className="shopping-list">
           <div className="top-bar">
-            {isSelectAll ? (
-              <div className="add-input-item wrap-select-all">
-                <div className="select-all-text">SELECT ALL</div>
-              </div>
+            {count ? (
+              isUnSelect ? (
+                <div
+                  onClick={this.unSelectAll}
+                  className="add-input-item wrap-select-all"
+                >
+                  <div className="select-all-text">DESELECT ALL</div>
+                </div>
+              ) : (
+                <div
+                  onClick={this.onSelectAll}
+                  className="add-input-item wrap-select-all"
+                >
+                  <div className="select-all-text">SELECT ALL</div>
+                </div>
+              )
             ) : (
               <div
                 className="add-input-item"
@@ -310,7 +322,9 @@ const mapStateToProps = state => {
   return {
     isSort: state.sort.stateSort,
     listItem: state.list.listItem,
-    isLoading: state.list.isLoading
+    isLoading: state.list.isLoading,
+    LIST_ID: state.list.LIST_ID,
+    count: state.list.count
   };
 };
 
@@ -321,7 +335,8 @@ const mapDispatchToProps = dispatch => {
       dispatch({ type: actionTypes.FETCH_ITEMS_SUCCESS, listItem: items }),
     onFetchFailure: err =>
       dispatch({ type: actionTypes.FETCH_ITEMS_FAILURE, error: err }),
-    fetchToDos: () => dispatch({ type: actionTypes.FETCH_TODOS })
+    onFreshState: () => dispatch({ type: actionTypes.REFRESH_STATE }),
+    onFreshCount: () => dispatch({ type: actionTypes.REFRESH_COUNT })
   };
 };
 

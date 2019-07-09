@@ -1,0 +1,123 @@
+.container .MuiPaper-root {
+  width: 600px;
+  padding: 0;
+}
+
+.header-dialog h6 {
+  font-size: 20px;
+}
+.btn-icon {
+  height: 48px;
+  width: 48px;
+  text-align: center;
+  cursor: pointer;
+}
+.btn-icon i {
+  display: inline-block;
+}
+.save-text {
+  max-width: 100%;
+  height: 48px;
+  flex-direction: column;
+}
+.saveProgress {
+  padding: 0px 8px;
+  color: rgb(128, 134, 139);
+  font-size: 13px;
+  display: inline-block;
+  font-weight: 500;
+}
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.main-info {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.image-container {
+  width: 100%;
+  height: 116px;
+  margin-bottom: 16px;
+}
+.image-main {
+  background-image: url(https://lh3.googleusercontent.com/_sfRmLUapEeHywY4hHPHumEofIiQf59gUlUPd0qUEBUeCHbA5sV8qz0DyIoVs6o64pxLyET-HCiv-1kJ=s116-e365-rw);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  height: 77px;
+  display: inline-block;
+  width: 116px;
+}
+.input-change-name,
+.text-note {
+  padding: 12px;
+  width: 100%;
+  background: #eeeeee;
+  border-radius: 8px;
+  outline: none;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #202124;
+  margin: 0;
+  border: 0;
+}
+.state-label {
+  margin: 8px 0px 0px;
+  width: 100%;
+}
+.text-state {
+  color: rgba(0, 0, 0, 0.54);
+  font-weight: 500;
+  line-height: 1.43em;
+  font-size: 14px;
+  letter-spacing: 0.2px;
+}
+.content {
+  width: 100%;
+  padding: 8px 16px;
+  display: flex;
+}
+.quantity-container {
+  width: 100%;
+  color: rgba(0, 0, 0, 0.87);
+  border: 1px solid rgb(218, 220, 224);
+  border-radius: 8px;
+  height: 50px;
+}
+.quantity-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 75%;
+  max-width: 100%;
+}
+.quantity-text,
+.quantity {
+  font-size: 14px;
+  font-weight: 500;
+}
+.quantity-text {
+  color: rgba(0, 0, 0, 0.54);
+}
+.quantity {
+  color: rgba(0, 0, 0, 0.87);
+}
+.content-note {
+  padding: 8px 16px;
+  display: flex;
+  flex-direction: column;
+}
+.text-note {
+  font-size: 13px;
+  height: 68px;
+  min-height: 68px;
+  max-height: 116px;
+  outline: none;
+  resize: none;
+}
+.footer-dialog {
+  padding: 8px 16px 16px;
+}

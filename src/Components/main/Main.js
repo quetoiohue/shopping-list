@@ -1,12 +1,9 @@
 import React, { Fragment } from "react";
 import Header from "../header/Header";
 import ListItemShopping from "../list-item-shopping/ListItemShopping";
-import { Link } from "react-router-dom";
 import "typeface-roboto";
 import "../../App.css";
-import { accessToken } from "../../API/login";
-import { connect } from "react-redux";
-import * as actionTypes from '../../store/action';
+import Loading from '../loading/Loading';
 
 class Main extends React.Component {
   constructor(props) {
@@ -18,11 +15,11 @@ class Main extends React.Component {
   }
 
   componentDidMount() {
+
     const tokenGoogle = JSON.parse(localStorage.getItem("tokenGoogle"));
     const { history } = this.props;
 
     //*****Google
-    console.log( tokenGoogle );
     // if( !tokenGoogle ) {
     //     history.push('/');
     // }
@@ -49,25 +46,17 @@ class Main extends React.Component {
 
   render() {
     const { isLoading } = this.state;
-    console.log("Main : ", this.props.isSort);
     return isLoading ? (
-      <div className="App-header text-loading">Loading...</div>
+      <Loading />
     ) : (
       <Fragment>
         <Header />
-        <ListItemShopping {...this.props}/>
+        <ListItemShopping />
       </Fragment>
     );
   }
 }
 
-const mapStateToProps = state => {
-  return {isSort: state.sort.stateSort}
-}
-
-const mapDispatchToProps = dispatch => {
-  return { onChangeStateSort: (isSort) => dispatch({type: actionTypes.CHANGE_STATE_SORT, stateSort: isSort}) } 
-}
 
 
-export default connect(mapStateToProps, mapDispatchToProps)(Main);
+export default Main;

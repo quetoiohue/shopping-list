@@ -36,7 +36,7 @@ export default function ButtonAppBar() {
           <Typography variant="h6" className={classes.title}>
             News
           </Typography>
-          <Typography color="inherit">Login</Typography>
+          <Typography color="inherit">Share</Typography>
         </Toolbar>
       </AppBar>
     </div>

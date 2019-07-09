@@ -7,7 +7,6 @@ export const accessToken = token => {
         }
     })
     .then(res => {
-        console.log(res);
         return res;
     })
 }
@@ -18,7 +17,6 @@ export const checkAccount =  (username , password) => {
         PASS: password
     })
     .then(res => {
-        console.log(res);
         return res;
     })
 }

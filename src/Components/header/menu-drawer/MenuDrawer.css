@@ -3,6 +3,11 @@
   margin: 0;
   box-sizing: border-box;
 }
+.container-menu-drawer .MuiPaper-root{
+  width: 400px;
+  margin: 0;
+  margin-bottom: 56px;
+}
 .wrap-account-item {
   width: 100%;
   padding: 16px;

@@ -17,7 +17,6 @@
 }
 .header .header-inner {
   padding: 5px 16px;
-  background: #fafafa;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,8 +27,7 @@
 .header-inner .header-content {
   display: flex;
   justify-content: space-between;
-  margin: 0px 40px;
-  padding: 0px 16px;
+  padding: 0px 10px;
   width: 100%;
   max-width: 600px;
   align-items: center;
@@ -87,10 +85,15 @@
 }
 .btn-icon {
   font-size: 24px;
-  /* display: inline; */
+  display: inline;
 }
 .header .btn-left {
   position: absolute;
   left: -8px;
   top: 50%;
+}
+
+/* header-selected */
+.header-selected {
+  background : #e8f0fe;
 }
