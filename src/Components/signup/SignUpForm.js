@@ -219,6 +219,7 @@ const SignUpForm = props => {
   } = state;
 
   return (
+    <>
     <div className="wrap-page ">
       <div className="containter-page flex-center">
         <div className="container-form flex-center">
@@ -355,6 +356,7 @@ const SignUpForm = props => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

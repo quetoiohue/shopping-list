@@ -17,6 +17,7 @@ import RenameForm from "./rename-form/RenameForm";
 import { connect } from "react-redux";
 import * as actionTypes from "../../../store/action";
 import * as fetch from "../../../API/Product";
+import { withRouter } from "react-router-dom";
 
 class MenuDrawer extends React.Component {
   constructor(props) {
@@ -51,7 +52,7 @@ class MenuDrawer extends React.Component {
 
   clickLogOut = () => {
     this.props.history.push("/");
-    localStorage.removeItem("tokenGoogle");
+    localStorage.removeItem("token");
     return;
   };
 
@@ -244,6 +245,7 @@ const ItemList = props => {
   
   const classItem = (props.LIST_ID === e.LIST_ID) ? "item-active item-primary" : "item-active item-other";
   return e.IS_PRIMARY ? (
+    <>
     <ListItem key={e.LIST_ID} className={classItem}>
       <RenameForm {...propsRename} />
       <ListItemText
@@ -264,6 +266,7 @@ const ItemList = props => {
           <MoreVert />
         </ListItemIcon>
         <Menu
+          className="position-menu-option"
           id="simple-menu"
           anchorEl={anchorEl}
           keepMounted
@@ -276,7 +279,9 @@ const ItemList = props => {
         </Menu>
       </div>
     </ListItem>
+    </>
   ) : (
+    <>
     <ListItem key={e.LIST_ID} className={classItem}>
       <RenameForm {...propsRename} />
       <ListItemText
@@ -297,6 +302,7 @@ const ItemList = props => {
           <MoreVert />
         </ListItemIcon>
         <Menu
+        className="position-menu-option-bottom"
           id="simple-menu"
           anchorEl={anchorEl}
           keepMounted
@@ -310,6 +316,7 @@ const ItemList = props => {
         </Menu>
       </div>
     </ListItem>
+    </>
   );
 };
 
@@ -329,7 +336,7 @@ const mapDispatchToProps = dispatch => {
   };
 };
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(MenuDrawer);
+)(MenuDrawer));

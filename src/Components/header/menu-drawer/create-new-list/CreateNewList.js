@@ -55,6 +55,7 @@ const CreateNewList = props => {
   };
   const { isPrimary, txtNameList } = state;
   return (
+    <React.Fragment>
     <Dialog
       open={props.open}
       onClose={props.clickCloseDialog}
@@ -104,6 +105,7 @@ const CreateNewList = props => {
         </Button>
       </DialogActions>
     </Dialog>
+    </React.Fragment>
   );
 };
 

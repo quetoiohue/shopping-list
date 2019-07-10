@@ -22,7 +22,8 @@ import {
   VisibilityOff,
   ErrorOutlineOutlined
 } from "@material-ui/icons";
-import { checkAccount } from '../../API/login';
+import * as fetch from '../../API/login';
+import Loading from '../loading/Loading';
 
 const useStyles = makeStyles(theme => ({
   margin: {
@@ -59,9 +60,6 @@ const useStyles = makeStyles(theme => ({
     boxShadow: " 0 5px 30px 0 rgba(3,216,222,.2)",
     transition: "all .4s",
     letterSpacing: ".3px"
-    // "&:hover": {
-    //   backgroundImage: "linear-gradient(to right ,#00dbde,#fc00ff,#00dbde)"
-    // }
   },
   m_5: {
     margin: "5px"
@@ -100,7 +98,12 @@ const LoginForm = props => {
     isLogin: false
   });
 
-  const { FB } = window;
+  React.useEffect(() => {
+    const get_Token = JSON.parse(localStorage.getItem('token'));
+    if (get_Token) {
+      props.history.push('/list');
+    }
+  }, [])
 
   const validateUser = () => {
     const { txtUsername } = state;
@@ -176,67 +179,31 @@ const LoginForm = props => {
       isPassword: !isPassword
     });
   };
+
   const onSubmit = async () => {
     const { txtUsername, txtPassword } = state;
-    const res = await checkAccount(txtUsername, txtPassword);
+    const res = await fetch.checkAccount(txtUsername, txtPassword);
     const isExistAccount = res.data.length;
     if (validateForm() && isExistAccount) {
       localStorage.setItem('USER_ID', res.data[0].USER_ID);
-      props.history.push("/list");
+      fetch.getToken(txtUsername, txtPassword).then(res => {
+        const token = res.data.token;
+         localStorage.setItem('token', JSON.stringify(token));
+         props.history.push("/list");
+      });
+      
       return;
     }
     return;
   };
-  // const autoCheck = setInterval(() => checkStatusLoginFacebook(), 100);
-
-  // // //Login with Facebook
-  // const checkStatusLoginFacebook = () => {
-  //   FB.getLoginStatus(response => {
-  //     console.log(response);
-  //     if (response.status === "connected") {
-  //       const newToken = response.authResponse.accessToken;
-  //       localStorage.setItem("token", newToken);
-  //       setState({
-  //         ...state,
-  //         isLoading: false
-  //       });
-  //       clearInterval(autoCheck);
-  //       props.history.push("/list");
-  //     }
-  //   });
-  // };
-  // const loginWithFacebook = () => {
-  //   FB.login();
-  // };
-
-  // Login with Google
-  const responseGoogle = response => {
-    console.log(response);
-    const res = {
-      profileObj: response.profileObj,
-      token: response.accessToken
-    };
-    localStorage.setItem("tokenGoogle", JSON.stringify(res));
-  };
-
-  const checkSignedInGoogle = () => {
-    const infoGG = JSON.parse(localStorage.getItem("tokenGoogle"));
-    if (infoGG) {
-      const token = infoGG.token;
-      if (token) {
-        props.history.push("/list");
-      }
-      // clearInterval(autoCheck);
-    }
-    setState({ ...state, isLoading: false });
-    return;
-  };
+ 
 
   const { txtUsername, txtPassword, errors, isPassword, isLoading } = state;
 
   return isLoading ? (
-    <div className="App-header text-loading">Loading...</div>
+    <Loading />
   ) : (
+    <>
     <div className="wrap-page ">
       <div className="containter-page flex-center">
         <div className="container-form flex-center">
@@ -351,8 +318,8 @@ const LoginForm = props => {
               <Tooltip title="Gmail" className={classes.m_5}>
                 <GoogleLogin
                   clientId="168202107270-vcl1dn5eoq8ldimh4nitcio7nc95am6q.apps.googleusercontent.com"
-                  onSuccess={responseGoogle}
-                  onFailure={responseGoogle}
+                  // onSuccess={responseGoogle}
+                  // onFailure={responseGoogle}
                   render={renderProps => (
                     <Fab
                       color="secondary"
@@ -386,6 +353,7 @@ const LoginForm = props => {
         </div>
       </div>
     </div>
+    </>
   );
 };
 

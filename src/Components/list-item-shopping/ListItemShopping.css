@@ -80,7 +80,7 @@ body {
     width: 100%;
     display: none;
     align-items: center;
-    transition: all 1s;
+    transition: all .5s;
 }
 .carousel-inner{
     width: 100%;
@@ -91,6 +91,30 @@ body {
     display: flex;
     max-width: 9000px;
     height: 100%;
+    transition: margin-left .5s ease-in;
+    margin-left: 0px;
+}
+.m-l-550{
+    animation: prev 1s;
+}
+@keyframes prev{
+    from {
+        margin-left: 0;
+    }
+    to {
+        margin-left: 450px;
+    }
+}
+.m-l--550{
+    animation: next 1s ;
+}
+@keyframes next{
+    from {
+        margin-left: 0;
+    }
+    to {
+        margin-left: -450px;
+    }
 }
 .slide {
     display: flex;
@@ -175,7 +199,7 @@ body {
     overflow: hidden;
     height: 72px;
     cursor: pointer;
-    transition: background .5s;
+    transition: background .2s;
 }
 .item-active-selected {
     background: rgba(66,133,244,.2) !important;
@@ -189,7 +213,7 @@ body {
     overflow: hidden;
     height: 72px;
     cursor: pointer;
-    transition: background .5s;
+    /* transition: background .5s; */
     font-size: 1rem;
     opacity: 0.6;
     color: rgba(0, 0, 0 , 0.8);
@@ -213,7 +237,6 @@ body {
     background-color: #fff;
     background-position: center;
     border-radius: 4px;
-    
     box-shadow: 0px 2px 2px rgba(0,0,0,.1);
 }
 .img-selected {

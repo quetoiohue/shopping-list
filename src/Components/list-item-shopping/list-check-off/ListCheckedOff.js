@@ -131,6 +131,7 @@ const CardOption = props => {
   const classes = useStyles();
 
   return (
+    <>
     <List component="nav" className="card-option" aria-label="Mailbox folders">
       <ListItem
         button
@@ -148,6 +149,7 @@ const CardOption = props => {
         <ListItemText>Delete all item</ListItemText>
       </ListItem>
     </List>
+    </>
   );
 };
 const mapStateToProps = state => {

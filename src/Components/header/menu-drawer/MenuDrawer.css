@@ -148,3 +148,13 @@
   padding-top: 0 !important;
   padding-bottom: 0 !important;
 }
+
+.position-menu-option .MuiPaper-root{
+  top: 204.5px !important;
+  left: 260px !important;
+}
+
+.position-menu-option-bottom .MuiPaper-root{
+  top: 332.5px !important;
+    left: 227px !important;
+}

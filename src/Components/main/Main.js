@@ -3,45 +3,29 @@ import Header from "../header/Header";
 import ListItemShopping from "../list-item-shopping/ListItemShopping";
 import "typeface-roboto";
 import "../../App.css";
-import Loading from '../loading/Loading';
+import Loading from "../loading/Loading";
+import * as fetch from "../../API/login";
 
 class Main extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      isLoading: true,
+      isLoading: true
     };
-    
   }
 
   componentDidMount() {
-
-    const tokenGoogle = JSON.parse(localStorage.getItem("tokenGoogle"));
-    const { history } = this.props;
-
-    //*****Google
-    // if( !tokenGoogle ) {
-    //     history.push('/');
-    // }
+    const token = JSON.parse(localStorage.getItem("token"));
+    fetch.verifyToken(token).then(res => {
+      if (res.data === "Token Fail"){
+        localStorage.removeItem('token');
+        this.props.history.push("/");
+      }
+      return;
+    });
     this.setState({
       isLoading: false
-    })
-   //****Facebook
-    // accessToken(token)
-    //   .then(res => {
-    //     console.log(res);
-    //     if (res.status === 200) {
-    //       this.setState({
-    //         dataUser: res.data
-    //       });
-    //     }
-    //     this.setState({ isLoading: false });
-    //     return;
-    //   })
-    //   .catch(err => {
-    //     console.log(err);
-    //     history.push("/");
-    //   });
+    });
   }
 
   render() {
@@ -56,7 +40,5 @@ class Main extends React.Component {
     );
   }
 }
-
-
 
 export default Main;

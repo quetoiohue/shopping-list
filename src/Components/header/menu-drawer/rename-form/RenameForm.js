@@ -47,6 +47,7 @@ const RenameForm = props => {
   }
   const { txtListRename } = state;
   return (
+    <>
     <Dialog
       open={props.openRename}
       onClose={props.onClickCloseRename}
@@ -79,6 +80,7 @@ const RenameForm = props => {
         </Button>
       </DialogActions>
     </Dialog>
+    </>
   );
 };
 

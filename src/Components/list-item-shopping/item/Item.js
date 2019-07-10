@@ -2,15 +2,12 @@ import React, { useEffect, useState } from "react";
 import "../ListItemShopping.css";
 import MaterialIcon from "material-icons-react";
 import * as fetch from "../../../API/Product";
-import * as actionTypes from "../../../store/action";
-import store from "../../../store/createStore";
 import { connect } from "react-redux";
 
 const Item = props => {
   const { item, handleClickOpenDialog } = props;
 
   const onClickImg = item => {
-    console.log(item);
     fetch.setSelectedItem(item.ITEM_ID, !item.IS_SELECTED);
   };
 

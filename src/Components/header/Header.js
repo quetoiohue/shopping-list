@@ -76,7 +76,7 @@ class Header extends React.Component {
 
     return (
        count > 0 ? <HeaderSelected {...this.props}/>  : 
-       <div>
+       <>
         <div className="header">
           <div className="header-inner">
             <div className="btn left-btn">
@@ -120,7 +120,7 @@ class Header extends React.Component {
           </div>
         </div>
         <MenuDrawer {...props} {...this.props} />
-      </div>
+      </>
       
     );
   }
@@ -174,6 +174,7 @@ class CardOptions extends React.Component {
     localStorage.setItem("isSort", JSON.stringify(this.props.isSort));
     const classes = this.state;
     return (
+      <React.Fragment>
       <List component="nav" className="card-option card-category">
         <ListItem
           button
@@ -221,6 +222,7 @@ class CardOptions extends React.Component {
           <ListItemText>Alphabetical</ListItemText>
         </ListItem>
       </List>
+      </React.Fragment>
     );
   }
 }

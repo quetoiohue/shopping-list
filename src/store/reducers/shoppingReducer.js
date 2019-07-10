@@ -8,7 +8,8 @@ var initialState = {
   isLoading: false,
   error: null,
   count: 0,
-  isSelected : false
+  isSelected : false,
+  
 };
 
 const shoppingReducer = (state = initialState, action) => {

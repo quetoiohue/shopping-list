@@ -1,7 +1,6 @@
 import React from "react";
 import "./ListItemShopping.css";
 import MaterialIcon from "material-icons-react";
-import data from "./data/data";
 import ListCheckedOff from "./list-check-off/ListCheckedOff";
 import ListItems from "./list-item/ListItems";
 import OrderCategoryList from "./order-category-list/OrderCategoryList";
@@ -12,24 +11,23 @@ import * as actionTypes from "../../store/action";
 import * as fetch from "../../API/Product";
 import Loading from "../loading/Loading";
 
-const arrSlide = data.listProduct;
-const numberOfSlide = arrSlide.length / 3;
-
 class ListItemShopping extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      translateX: 0,
       textInput: "",
       openRecommend: false,
       isSelectAll: false,
-      listProduct: []
+      listProduct: [],
+      offset: 0,
+      pagesize: 5,
     };
   }
 
   componentDidMount() {
+    const { offset, pagesize } = this.state;
     this.props.onFetchBegin();
-    fetch.products().then(res => {
+    fetch.products(offset, pagesize).then(res => {  
       this.setState({ listProduct: res.data });
     });
     this.props.onFreshState(this.props.LIST_ID);
@@ -44,26 +42,41 @@ class ListItemShopping extends React.Component {
   };
 
   prevSlide = event => {
-    const { translateX } = this.state;
-    const { slide } = this.refs;
-    if (translateX < -slide.offsetWidth * numberOfSlide) {
-      this.setState({
-        translateX: translateX + slide.offsetWidth * numberOfSlide
-      });
-    } else {
-      return;
-    }
+    const { offset, pagesize } = this.state;
+    const slides = document.getElementsByClassName('slides');
+    if (offset > 0) {
+      slides[0].classList.add('m-l-550');
+      
+      this.setState((prevState) => {
+        return {offset: prevState.offset - pagesize + 1}
+      }, () => {
+        fetch.products(this.state.offset, pagesize).then(res => {
+        this.setState({ listProduct: res.data });
+        });
+      })
+      setTimeout(() => {
+        slides[0].classList.remove('m-l-550');
+      }, 1000);  
+    } 
+    return;
   };
   nextSlide = event => {
-    const { translateX } = this.state;
-    const { slide } = this.refs;
-    if (translateX >= -(arrSlide.length - numberOfSlide) * slide.offsetWidth) {
-      this.setState({
-        translateX: translateX - slide.offsetWidth * numberOfSlide
-      });
-    } else {
-      return;
-    }
+    const { pagesize, listProduct } = this.state;
+    const slides = document.getElementsByClassName('slides');
+    if (pagesize <= listProduct.length ) {
+          slides[0].classList.add('m-l--550'); 
+        this.setState((prevState) => {
+              return {offset: prevState.offset + pagesize - 1}
+            }, () => {
+              fetch.products(this.state.offset, pagesize).then(res => {
+              this.setState({ listProduct: res.data });
+              });
+            }) 
+        setTimeout(() => {
+          slides[0].classList.remove('m-l--550'); 
+        }, 1000);     
+    } 
+    return
   };
   addItem = item => {
     const { PRODUCT_NAME, PRODUCT_PICTURE, PRODUCT_NOTE, CATEGORY_ID } = item;
@@ -177,15 +190,8 @@ class ListItemShopping extends React.Component {
     fetch.setSelectedAllItem(false, false);
   };
   render() {
-    const styles = {
-      slidesStyle: {
-        transform: `translateX(${this.state.translateX}px)`,
-        transition: "all 1s"
-      }
-    };
-
-    const { slidesStyle } = styles;
-    const { listProduct, textInput, openRecommend, isSelectAll } = this.state;
+    const { listProduct, textInput, openRecommend, offset, pagesize } = this.state;
+    
     const { isSort, listItem, isLoading, count } = this.props;
     const listItemCheckOff = listItem.filter(e => e.IS_CHECKED === 1);
     const props = {
@@ -260,7 +266,7 @@ class ListItemShopping extends React.Component {
                 </div>
                 <div className="carousel" ref="carousel">
                   <div className="carousel-inner">
-                    <div className="slides" style={slidesStyle}>
+                    <div className="slides">
                       {listProduct.map((item, _index) => (
                         <div
                           className="slide"

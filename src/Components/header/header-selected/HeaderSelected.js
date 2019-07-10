@@ -20,7 +20,6 @@ class HeaderSelected extends React.Component {
     } 
     render(){
       const { count } = this.props;
-      console.log(this.props);
         return (
             <>
             <div className="header header-selected">
