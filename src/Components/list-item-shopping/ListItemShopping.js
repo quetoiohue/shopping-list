@@ -10,6 +10,8 @@ import { connect } from "react-redux";
 import * as actionTypes from "../../store/action";
 import * as fetch from "../../API/Product";
 import Loading from "../loading/Loading";
+import SnackBar from './snack-bar/SnackBar';
+
 
 class ListItemShopping extends React.Component {
   constructor(props) {
@@ -28,7 +30,7 @@ class ListItemShopping extends React.Component {
     const { offset, pagesize } = this.state;
     this.props.onFetchBegin();
     fetch.products(offset, pagesize).then(res => {  
-      this.setState({ listProduct: res.data });
+      this.setState({ listProduct: res.data });     
     });
     this.props.onFreshState(this.props.LIST_ID);
     this.props.onFreshCount();
@@ -128,12 +130,16 @@ class ListItemShopping extends React.Component {
   };
 
   deleteItem = item => {
+    this.props.onSetTextSnackBar("1 item deleted")
+    this.onClickOpenSnackBar();
     fetch.deleteItem(item.ITEM_ID);
   };
 
-  toggleState = item => {
-    const { ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED } = item;
-    fetch.updateItem(
+  toggleState =  item => {
+    const { ITEM_ID, ITEM_NAME, ITEM_QUANTITY, ITEM_NOTE, IS_CHECKED } = item;;
+     this.props.onSetTextSnackBar(IS_CHECKED ? "1 item unchecked" : "1 item checked")
+    this.onClickOpenSnackBar();
+   fetch.updateItem(
       ITEM_ID,
       ITEM_NAME,
       ITEM_QUANTITY,
@@ -143,10 +149,16 @@ class ListItemShopping extends React.Component {
   };
 
   uncheckedAllItem = () => {
+    let lengthArrChecked = this.props.listItem.filter(e => e.IS_CHECKED === 1).length;
+    this.props.onSetTextSnackBar(lengthArrChecked + " item unchecked")
+    this.onClickOpenSnackBar();
     fetch.setStateAllOfItem(false);
   };
 
   deleteAllItemCheckOff = () => {
+    let lengthArrChecked = this.props.listItem.filter(e => e.IS_CHECKED === 1).length;
+    this.props.onSetTextSnackBar(lengthArrChecked + " item deleted")
+    this.onClickOpenSnackBar();
     fetch.deleteFollowState(true);
   };
 
@@ -189,9 +201,26 @@ class ListItemShopping extends React.Component {
   unSelectAll = () => {
     fetch.setSelectedAllItem(false, false);
   };
+
+  onClickOpenSnackBar = () => {
+    fetch.start_transaction();
+    this.props.onSetOpenSnackBar(true);
+  }
+
+  onClickUndo = () => {
+    fetch.rollback();
+    this.props.onSetOpenSnackBar(false);
+  }
+
+  onClickCloseSnackBar = (event, reason) => {
+    fetch.commit();
+    if (reason === 'clickaway') {
+      return;
+    }
+    this.props.onSetOpenSnackBar(false);
+  }
   render() {
-    const { listProduct, textInput, openRecommend, offset, pagesize } = this.state;
-    
+    const { listProduct, textInput, openRecommend } = this.state;
     const { isSort, listItem, isLoading, count } = this.props;
     const listItemCheckOff = listItem.filter(e => e.IS_CHECKED === 1);
     const props = {
@@ -207,6 +236,12 @@ class ListItemShopping extends React.Component {
       onChangeInfoItem: this.onChangeInfoItem,
       triggerSelectAll: this.triggerSelectAll
     };
+
+    const propsSnackBar = {
+      onClickOpenSnackBar: this.onClickOpenSnackBar,
+      onClickCloseSnackBar: this.onClickCloseSnackBar,
+      onClickUndo: this.onClickUndo
+    }
     const isUnSelect =
       count < listItem.length - listItemCheckOff.length ? false : true;
     return isLoading ? (
@@ -319,6 +354,7 @@ class ListItemShopping extends React.Component {
           {isSort.isAlpha === true ? <OrderAlphaList {...props} /> : ""}
           {listItemCheckOff.length ? <ListCheckedOff {...props} /> : ""}
         </div>
+        <SnackBar {...propsSnackBar}/>
       </div>
     );
   }
@@ -330,7 +366,8 @@ const mapStateToProps = state => {
     listItem: state.list.listItem,
     isLoading: state.list.isLoading,
     LIST_ID: state.list.LIST_ID,
-    count: state.list.count
+    count: state.list.count,
+    txtSnackBar: state.list.txtSnackBar,
   };
 };
 
@@ -342,7 +379,9 @@ const mapDispatchToProps = dispatch => {
     onFetchFailure: err =>
       dispatch({ type: actionTypes.FETCH_ITEMS_FAILURE, error: err }),
     onFreshState: () => dispatch({ type: actionTypes.REFRESH_STATE }),
-    onFreshCount: () => dispatch({ type: actionTypes.REFRESH_COUNT })
+    onFreshCount: () => dispatch({ type: actionTypes.REFRESH_COUNT }),
+    onSetOpenSnackBar: (openSnackBar) => dispatch({ type: actionTypes.SET_OPEN_SNACKBAR, openSnackBar: openSnackBar}),
+    onSetTextSnackBar: (txtSnackBar) => dispatch({ type: actionTypes.SET_TEXT_SNACKBAR, txtSnackBar: txtSnackBar}),
   };
 };
 

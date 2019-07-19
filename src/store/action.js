@@ -10,8 +10,11 @@ export const REFRESH_STATE = 'REFRESH_STATE';
 export const FETCH_LISTS_SUCCESS = 'FETCH_LISTS_SUCCESS';
 export const REFRESH_LISTS = 'REFRESH_LISTS';
 export const SHOW_LIST = 'SHOW_LIST';
+export const UPDATE_HISTORY = 'UPDATE_HISTORY';
 
 //action selected
 export const SET_COUNT = 'SET_COUNT';
 export const SET_SELECTED = 'SET_SELECTED';
 export const REFRESH_COUNT = 'REFRESH_COUNT';
+export const SET_OPEN_SNACKBAR = 'SET_OPEN_SNACKBAR';
+export const SET_TEXT_SNACKBAR = 'SET_TEXT_SNACKBAR';

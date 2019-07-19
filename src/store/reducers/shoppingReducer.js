@@ -1,5 +1,6 @@
 import * as actionTypes from "../action";
 import * as fetch from "../../API/Product";
+import { stat } from "fs";
 
 var initialState = {
   listItem: [],
@@ -9,7 +10,8 @@ var initialState = {
   error: null,
   count: 0,
   isSelected : false,
-  
+  openSnackBar: false,
+  txtSnackBar: ""
 };
 
 const shoppingReducer = (state = initialState, action) => {
@@ -71,6 +73,16 @@ const shoppingReducer = (state = initialState, action) => {
       fetch.getCountSelected(state.LIST_ID);
       return {
         ...state
+      } 
+    case actionTypes.SET_OPEN_SNACKBAR:
+      return{
+        ...state,
+        openSnackBar: action.openSnackBar
+      }   
+    case actionTypes.SET_TEXT_SNACKBAR:
+      return {
+        ...state,
+        txtSnackBar: action.txtSnackBar
       }  
     default:
       return state;

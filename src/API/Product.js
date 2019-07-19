@@ -166,20 +166,36 @@ export const setSelectedAllItem = (IS_SELECTED, IS_CHECKED) => {
     IS_CHECKED
   }).then(res => {
     store.dispatch({ type : actionTypes.REFRESH_STATE})
-    // store.dispatch({ type: actionTypes.REFRESH_COUNT})
+    store.dispatch({ type: actionTypes.REFRESH_COUNT})
   })
 }
 
 export const setChecked_ItemSelected = () => {
   return axios.post(host + '/set_state_item_selected').then(res => {
     store.dispatch({ type : actionTypes.REFRESH_STATE})
-    // store.dispatch({ type: actionTypes.REFRESH_COUNT})
+    store.dispatch({ type: actionTypes.REFRESH_COUNT})
   })
 }
 
 export const delete_ItemSelected = () => {
   return axios.post(host + '/delete_item_selected').then(res => {
     store.dispatch({ type : actionTypes.REFRESH_STATE})
-    // store.dispatch({ type: actionTypes.REFRESH_COUNT})
+    store.dispatch({ type: actionTypes.REFRESH_COUNT})
+  })
+}
+
+export const rollback = () => {
+  return axios.post(host +'/rollback').then(res => {
+    store.dispatch({ type: actionTypes.REFRESH_STATE})
+  })
+}
+
+export const start_transaction = () => {
+  return axios.post(host +'/start_transaction');
+}
+
+export const commit = () => {
+  return axios.post(host +'/commit').then(res => {
+    store.dispatch({ type: actionTypes.REFRESH_STATE})
   })
 }
